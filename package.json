@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Expert casino game guides and strategies affiliate website",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "prebuild": "node scripts/text-guard.mjs",
     "dev": "astro dev --host",
