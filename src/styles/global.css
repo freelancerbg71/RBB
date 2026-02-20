@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --surface-0: #141711;
+  --surface-1: #1d2219;
+  --surface-2: #2a3124;
+  --stroke-soft: rgba(34, 197, 94, 0.24);
+  --stroke-hard: rgba(255, 255, 255, 0.1);
+  --glow: 0 20px 60px rgba(34, 197, 94, 0.25);
+}
+
+/* Blog typography: make markdown content comfortably readable (EN + FR). */
+.prose {
+  @apply text-gray-300;
+}
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  @apply text-white font-bold;
+}
+.prose h2 {
+  @apply text-2xl mt-10 mb-5;
+}
+.prose h3 {
+  @apply text-xl mt-8 mb-4;
+}
+.prose p {
+  @apply leading-relaxed mb-6;
+}
+.prose ul,
+.prose ol {
+  @apply mb-6 pl-6;
+}
+.prose li {
+  @apply mb-2;
+}
+.prose a {
+  @apply text-brand-400 hover:text-brand-300 underline;
+}
+.prose strong {
+  @apply text-white;
+}
+.prose blockquote {
+  @apply border-l-4 border-brand-500 pl-4 italic my-8;
+}
+.prose table {
+  @apply w-full border-collapse mb-8;
+}
+.prose th,
+.prose td {
+  @apply border border-dark-700 p-3 text-left;
+}
+.prose th {
+  @apply bg-dark-700 text-white font-semibold;
+}
+.prose tr:nth-child(even) {
+  @apply bg-dark-800/50;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply text-gray-100 font-sans antialiased;
+    background:
+      radial-gradient(circle at 8% -8%, rgba(74, 222, 128, 0.22), transparent 38%),
+      radial-gradient(circle at 92% -16%, rgba(253, 230, 138, 0.2), transparent 34%),
+      linear-gradient(180deg, #11150f 0%, #191f16 46%, #11150f 100%);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold tracking-tight;
+  }
+
+  /* Remove native spinner controls from number inputs across the site. */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-dark-900 rounded-xl transition-all duration-200;
+    background: linear-gradient(135deg, #22c55e 0%, #166534 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: var(--glow);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 26px 64px rgba(34, 197, 94, 0.34);
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-dark-900 bg-accent-400 rounded-lg hover:bg-accent-500 hover:scale-105 transition-all duration-200;
+  }
+  
+  .btn-outline {
+    @apply inline-flex items-center justify-center px-6 py-3 text-base font-semibold text-brand-300 rounded-xl transition-all duration-200;
+    border: 1px solid var(--stroke-soft);
+    background: rgba(34, 197, 94, 0.08);
+  }
+
+  .btn-outline:hover {
+    @apply text-white;
+    border-color: rgba(34, 197, 94, 0.55);
+    background: rgba(34, 197, 94, 0.2);
+  }
+  
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-brand-400 to-accent-400 bg-clip-text text-transparent;
+  }
+
+  .eyebrow {
+    @apply uppercase tracking-[0.24em] text-xs font-semibold text-brand-300;
+  }
+
+  .headline-balance {
+    text-wrap: balance;
+  }
+  
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 xl:px-12;
+  }
+  
+  .affiliate-banner {
+    @apply fixed bottom-0 left-0 right-0 z-50 bg-gradient-to-r from-dark-800 to-dark-900 border-t border-brand-500/30 p-4;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Keep small/body-muted copy readable on dark backgrounds. */
+  .text-gray-500 {
+    color: #9ca3af !important;
+  }
+}

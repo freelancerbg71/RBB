@@ -1,0 +1,306 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { CATEGORY_NAMES, type Locale } from '../../config/affiliate';
+import { getDefaultHeroImageForPost } from '../../utils/blog-hero';
+
+function slugifyCategory(input: string): string {
+  return input.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+const currentPath = Astro.url.pathname;
+const locale: Locale = currentPath.startsWith('/fr') ? 'fr' : 'en';
+
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.locale === locale && data.postType === 'guide';
+});
+
+const guideCount = allPosts.length;
+const providerCount = new Set(allPosts.map((p) => p.data.gameProvider).filter(Boolean)).size;
+
+const featuredPosts = allPosts.filter((post) => post.data.featured).slice(0, 3);
+const recentPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 7);
+
+const categories = [
+  { slug: 'slots', icon: '777' },
+  { slug: 'crash-games', icon: 'Aviator' },
+  { slug: 'live-casino', icon: 'Live' },
+  { slug: 'table-games', icon: 'Cards' },
+  { slug: 'strategy', icon: 'Tips' },
+].filter((cat) => allPosts.some((p) => slugifyCategory(p.data.category) === cat.slug));
+
+const heroText = {
+  en: {
+    badge: 'Editorial Learning Hub',
+    title: 'Play Smarter by Reading the Pattern Before the Pitch',
+    subtitle:
+      'Game mechanics, odds context, and strategy breakdowns in plain language. No hype loops. No fake certainty.',
+    primaryCta: 'Browse All Guides',
+    secondaryCta: 'Latest Analysis',
+    panelTitle: 'What People Read First',
+    stats: {
+      guides: guideCount.toString(),
+      guidesLabel: 'Guides',
+      providers: providerCount.toString(),
+      providersLabel: 'Providers',
+      educational: '100%',
+      educationalLabel: 'Educational',
+    },
+    browseByCategory: 'Browse by Topic',
+    featuredGuides: 'Editor Picks',
+    featuredSubtitle: 'High-signal explainers we recommend starting with.',
+    latestGuides: 'Fresh Guides',
+    latestSubtitle: 'Newest explainers and updates from the desk.',
+    ctaTitle: 'Start With One Guide. Leave With A Better Filter.',
+    ctaSubtitle:
+      'Learn how to read mechanics and risk before you place a bet. Build a process, not a superstition.',
+    ctaButton: 'Read the Guides',
+    viewAll: 'View All',
+    geoNote: 'Subject to local gambling laws and regulations.',
+  },
+  fr: {
+    badge: 'Hub Editorial Educatif',
+    title: 'Jouez Plus Malin en Lisant le Systeme Avant le Buzz',
+    subtitle:
+      'Mecaniques de jeu, contexte des cotes et analyses de strategie en langage clair. Sans hype. Sans promesse.',
+    primaryCta: 'Parcourir Tous les Guides',
+    secondaryCta: 'Analyses Recentes',
+    panelTitle: 'Ce que les lecteurs ouvrent en premier',
+    stats: {
+      guides: guideCount.toString(),
+      guidesLabel: 'Guides',
+      providers: providerCount.toString(),
+      providersLabel: 'Fournisseurs',
+      educational: '100%',
+      educationalLabel: 'Educatif',
+    },
+    browseByCategory: 'Parcourir par Theme',
+    featuredGuides: 'Choix de la Redaction',
+    featuredSubtitle: 'Explications a fort impact pour bien commencer.',
+    latestGuides: 'Nouveaux Guides',
+    latestSubtitle: 'Dernieres analyses et mises a jour.',
+    ctaTitle: 'Commencez par un Guide. Repartez avec un Meilleur Filtre.',
+    ctaSubtitle:
+      'Apprenez a lire les mecaniques et le risque avant de miser. Construisez une methode, pas une superstition.',
+    ctaButton: 'Lire les Guides',
+    viewAll: 'Voir Tout',
+    geoNote: 'Sous reserve des lois et reglementations locales sur les jeux d argent.',
+  },
+};
+
+const seo = {
+  en: {
+    title: 'Read Between Bets | Educational Casino Game Guides',
+    description:
+      'Learn how casino games work with educational, plain-language guides on mechanics, strategy and risk context.',
+  },
+  fr: {
+    title: 'Read Between Bets | Guides educatifs de jeux de casino',
+    description:
+      'Comprenez le fonctionnement des jeux de casino avec des guides educatifs en langage clair sur les mecaniques, la strategie et le risque.',
+  },
+};
+
+const h = heroText[locale];
+const heroPanelPosts = recentPosts.slice(0, 3);
+const latestLead = recentPosts[0];
+const latestGrid = recentPosts.slice(1, 7);
+---
+
+<Layout title={seo[locale].title} description={seo[locale].description} locale={locale} alternates={{ en: '/', fr: '/fr/' }}>
+  <section class="relative overflow-hidden border-b border-white/10">
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_74%_5%,rgba(236,72,153,0.26),transparent_32%),radial-gradient(circle_at_0%_100%,rgba(251,191,36,0.14),transparent_28%)]"></div>
+    <div class="relative section-padding max-w-7xl mx-auto py-14 sm:py-16 lg:py-20">
+      <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+        <div>
+          <p class="eyebrow mb-5">{h.badge}</p>
+          <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.06] text-white max-w-2xl headline-balance">
+            {h.title}
+          </h1>
+          <p class="mt-6 text-base sm:text-lg text-gray-300 max-w-xl">
+            {h.subtitle}
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="btn-primary">
+              {h.primaryCta}
+            </a>
+            <a href={locale === 'en' ? '/blog/news' : '/fr/blog/news'} class="btn-outline">
+              {h.secondaryCta}
+            </a>
+          </div>
+
+      <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+        <div>
+          <p class="eyebrow mb-5">{h.badge}</p>
+          <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.06] text-white max-w-2xl headline-balance">
+            {h.title}
+          </h1>
+          <p class="mt-6 text-base sm:text-lg text-gray-300 max-w-xl">
+            {h.subtitle}
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="btn-primary">
+              {h.primaryCta}
+            </a>
+            <a href={locale === 'en' ? '/blog/news' : '/fr/blog/news'} class="btn-outline">
+              {h.secondaryCta}
+            </a>
+          </div>
+
+          <div class="mt-10 grid gap-5 sm:grid-cols-3">
+            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-4">
+              <p class="text-2xl font-display text-white">{h.stats.guides}</p>
+              <p class="text-xs uppercase tracking-[0.14em] text-gray-400 mt-1">{h.stats.guidesLabel}</p>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-4">
+              <p class="text-2xl font-display text-white">{h.stats.providers}</p>
+              <p class="text-xs uppercase tracking-[0.14em] text-gray-400 mt-1">{h.stats.providersLabel}</p>
+            </div>
+            <div class="rounded-xl border border-white/10 bg-white/5 px-4 py-4">
+              <p class="text-2xl font-display text-white">{h.stats.educational}</p>
+              <p class="text-xs uppercase tracking-[0.14em] text-gray-400 mt-1">{h.stats.educationalLabel}</p>
+            </div>
+          </div>
+        </div>
+
+        <aside class="p-6 lg:p-7 border-l border-white/5 h-full">
+          <p class="eyebrow mb-5 text-gray-400">{h.panelTitle}</p>
+          <div class="space-y-6">
+            {heroPanelPosts.map((post, index) => (
+              <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="group flex items-start gap-4 transition-colors">
+                <div class="shrink-0 w-8 text-brand-500 font-mono text-xl leading-none pt-0.5">
+                  {String(index + 1).padStart(2, '0')}
+                </div>
+                <div class="min-w-0">
+                  <p class="text-gray-300 text-sm font-semibold leading-snug line-clamp-2 group-hover:text-white transition-colors">{post.data.title}</p>
+                  <p class="mt-1 text-xs text-brand-500/60 font-mono uppercase tracking-widest">{post.data.category}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+
+          <p class="mt-8 text-xs text-gray-500 font-mono border-t border-white/5 pt-4">{h.geoNote}</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12">
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="flex items-center justify-between gap-4 mb-6">
+        <h2 class="text-2xl sm:text-3xl font-display text-white">{h.browseByCategory}</h2>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        {categories.map((cat) => (
+          <a href={locale === 'en' ? `/category/${cat.slug}` : `/fr/category/${cat.slug}`} class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 transition-all hover:-translate-y-[1px] hover:border-brand-300/60 hover:text-white">
+            <span class="text-brand-300">{cat.icon}</span>
+            <span>{CATEGORY_NAMES[cat.slug]?.[locale] || cat.slug}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  {featuredPosts.length > 0 && (
+    <section class="py-8 sm:py-10">
+      <div class="section-padding max-w-7xl mx-auto">
+        <div class="flex items-end justify-between gap-4 mb-7">
+          <div>
+            <p class="eyebrow mb-2">{h.featuredGuides}</p>
+            <p class="text-gray-300 max-w-2xl">{h.featuredSubtitle}</p>
+          </div>
+          <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="btn-outline hidden sm:inline-flex">{h.viewAll}</a>
+        </div>
+
+        <div class="grid gap-12 lg:grid-cols-[1.2fr_0.8fr]">
+          <article class="group">
+            <a href={locale === 'en' ? `/blog/${featuredPosts[0].data.urlSlug}` : `/fr/blog/${featuredPosts[0].data.urlSlug}`} class="block">
+              <div class="aspect-[16/9] overflow-hidden rounded mb-6">
+                <img src={getDefaultHeroImageForPost(featuredPosts[0])} alt={featuredPosts[0].data.title} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+              </div>
+              <div>
+                <p class="text-brand-500 font-mono uppercase tracking-widest text-xs mb-3">{featuredPosts[0].data.category}</p>
+                <h3 class="text-3xl font-display text-white leading-tight line-clamp-2 group-hover:text-brand-100 transition-colors">{featuredPosts[0].data.title}</h3>
+                <p class="mt-4 text-gray-400 line-clamp-2 leading-relaxed text-lg">{featuredPosts[0].data.description}</p>
+              </div>
+            </a>
+          </article>
+
+          <div class="flex flex-col justify-center space-y-8">
+            {featuredPosts.slice(1).map((post) => (
+              <article class="group">
+                <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="flex gap-6 items-center">
+                  <div class="w-32 h-32 overflow-hidden shrink-0 rounded">
+                     <img src={getDefaultHeroImageForPost(post)} alt={post.data.title} class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" loading="lazy" />
+                  </div>
+                  <div class="min-w-0">
+                    <p class="text-brand-500 font-mono uppercase tracking-widest text-xs mb-2">{post.data.category}</p>
+                    <h3 class="text-xl text-gray-200 font-semibold leading-snug line-clamp-2 group-hover:text-white transition-colors">{post.data.title}</h3>
+                  </div>
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="py-14">
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="flex items-end justify-between gap-4 mb-7">
+        <div>
+          <p class="eyebrow mb-2">{h.latestGuides}</p>
+          <p class="text-gray-300 max-w-2xl">{h.latestSubtitle}</p>
+        </div>
+        <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="btn-outline hidden sm:inline-flex">{h.viewAll}</a>
+      </div>
+
+      <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
+        {latestLead && (
+          <article class="group relative pb-8 border-b border-white/10 lg:border-none lg:pb-0">
+            <a href={locale === 'en' ? `/blog/${latestLead.data.urlSlug}` : `/fr/blog/${latestLead.data.urlSlug}`} class="block">
+              <div class="aspect-[4/3] overflow-hidden rounded mb-6">
+                <img src={getDefaultHeroImageForPost(latestLead)} alt={latestLead.data.title} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+              </div>
+              <div>
+                <p class="text-brand-500 font-mono uppercase tracking-widest text-xs mb-3">{latestLead.data.category}</p>
+                <h3 class="text-3xl font-display text-white leading-tight line-clamp-2 group-hover:text-brand-100 transition-colors">{latestLead.data.title}</h3>
+                <p class="mt-4 text-gray-400 line-clamp-3 leading-relaxed text-lg">{latestLead.data.description}</p>
+              </div>
+            </a>
+          </article>
+        )}
+
+        <div class="flex flex-col justify-between space-y-8 lg:pl-12 lg:border-l lg:border-white/5">
+          {latestGrid.map((post) => (
+            <article class="group">
+              <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="block">
+                <p class="text-brand-500 font-mono uppercase tracking-widest text-[10px] mb-2">{post.data.category}</p>
+                <h3 class="text-xl text-gray-300 font-semibold leading-snug line-clamp-2 group-hover:text-white transition-colors">{post.data.title}</h3>
+                <p class="mt-2 text-sm text-gray-500 font-mono">{post.data.pubDate.toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pb-16 sm:pb-20">
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="rounded-3xl border border-brand-300/30 bg-gradient-to-r from-brand-700/45 to-brand-900/45 p-8 sm:p-10 lg:p-12">
+        <p class="eyebrow mb-4 text-brand-100">{h.badge}</p>
+        <h2 class="text-3xl sm:text-4xl font-display text-white leading-tight">{h.ctaTitle}</h2>
+        <p class="mt-4 text-gray-200">{h.ctaSubtitle}</p>
+        <div class="mt-8">
+          <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="btn-primary">{h.ctaButton}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
