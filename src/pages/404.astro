@@ -1,0 +1,50 @@
+﻿---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout 
+  title="Page Not Found | Read Between Bets"
+  description="Sorry, the page you are looking for does not exist. Browse our casino game guides and strategies."
+>
+  <section class="py-20">
+    <div class="section-padding max-w-7xl mx-auto text-center">
+      <div class="mx-auto mb-6 h-32 w-32 rounded-2xl bg-dark-800 border border-dark-700 grid place-items-center overflow-hidden shadow-2xl">
+        <img src="/img/brand/spy-404.webp" alt="404 Error - Page Not Found" class="w-full h-full object-contain" />
+      </div>
+      <h1 class="text-6xl font-bold text-white mb-4">404</h1>
+      <h2 class="text-2xl font-semibold text-gray-300 mb-6">Page Not Found</h2>
+      <p class="text-gray-400 max-w-md mx-auto mb-8">
+        Looks like this page flew away like a crash game multiplier. Do not worry, we have plenty of other guides.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/" class="btn-primary">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+          Go Home
+        </a>
+        <a href="/blog" class="btn-outline">
+          Browse Guides
+        </a>
+      </div>
+
+      <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+        <a href="/category/crash-games" class="p-4 bg-dark-800 rounded-xl border border-dark-700 hover:border-brand-500/50 transition-colors">
+          <div class="text-xs tracking-widest text-brand-400 font-bold mb-2">CRASH</div>
+          <p class="text-white font-medium">Crash Games</p>
+        </a>
+        <a href="/category/slots" class="p-4 bg-dark-800 rounded-xl border border-dark-700 hover:border-brand-500/50 transition-colors">
+          <div class="text-xs tracking-widest text-brand-400 font-bold mb-2">SLOTS</div>
+          <p class="text-white font-medium">Slots</p>
+        </a>
+        <a href="/category/live-casino" class="p-4 bg-dark-800 rounded-xl border border-dark-700 hover:border-brand-500/50 transition-colors">
+          <div class="text-xs tracking-widest text-brand-400 font-bold mb-2">LIVE</div>
+          <p class="text-white font-medium">Live Casino</p>
+        </a>
+        <a href="/category/strategy" class="p-4 bg-dark-800 rounded-xl border border-dark-700 hover:border-brand-500/50 transition-colors">
+          <div class="text-xs tracking-widest text-brand-400 font-bold mb-2">PLAY</div>
+          <p class="text-white font-medium">Strategy</p>
+        </a>
+      </div>
+    </div>
+  </section>
+</Layout>

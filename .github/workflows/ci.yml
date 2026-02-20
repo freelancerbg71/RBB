@@ -1,0 +1,43 @@
+﻿name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm run build
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Content lint (strict)
+        run: npm run lint:content -- --strict
+
+      - name: Internal link and alternate checks
+        run: npm run check:links
+
+      - name: Route smoke tests
+        run: npm run test:smoke
+
+      - name: Accessibility and metadata checks
+        run: npm run test:a11y

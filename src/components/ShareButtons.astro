@@ -1,0 +1,60 @@
+---
+import type { Locale } from '../config/affiliate';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  url: string;
+}
+
+const { locale, title, url } = Astro.props;
+
+const copyLabel = locale === 'fr' ? 'Copier le lien' : 'Copy link';
+const copiedLabel = locale === 'fr' ? 'Lien copie' : 'Link copied';
+const shareLabel = locale === 'fr' ? 'Partager' : 'Share';
+
+const encodedUrl = encodeURIComponent(url);
+const encodedTitle = encodeURIComponent(title);
+const xUrl = `https://x.com/intent/post?url=${encodedUrl}&text=${encodedTitle}`;
+const redditUrl = `https://www.reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`;
+const whatsappUrl = `https://wa.me/?text=${encodedTitle}%20${encodedUrl}`;
+---
+
+<div class="flex flex-wrap items-center justify-end gap-2">
+  <span class="text-xs uppercase tracking-[0.12em] text-gray-500 mr-1">{shareLabel}</span>
+  <a href={xUrl} target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-dark-900 border border-dark-700 text-gray-300 hover:text-white text-sm">X</a>
+  <a href={redditUrl} target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-dark-900 border border-dark-700 text-gray-300 hover:text-white text-sm">Reddit</a>
+  <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-lg bg-dark-900 border border-dark-700 text-gray-300 hover:text-white text-sm">WhatsApp</a>
+  <button
+    type="button"
+    data-copy-link
+    data-copy-url={url}
+    data-copy-default={copyLabel}
+    data-copy-success={copiedLabel}
+    class="px-3 py-1.5 rounded-lg bg-dark-900 border border-dark-700 text-gray-300 hover:text-white text-sm"
+  >
+    {copyLabel}
+  </button>
+</div>
+
+<script>
+  const copyButtons = Array.from(document.querySelectorAll('[data-copy-link]')) as HTMLButtonElement[];
+  copyButtons.forEach((button) => {
+    button.addEventListener('click', async () => {
+      const url = button.dataset.copyUrl;
+      if (!url) return;
+      const defaultText = button.dataset.copyDefault ?? 'Copy link';
+      const successText = button.dataset.copySuccess ?? 'Link copied';
+
+      try {
+        await navigator.clipboard.writeText(url);
+        button.textContent = successText;
+        window.setTimeout(() => {
+          button.textContent = defaultText;
+        }, 1400);
+      } catch {
+        button.textContent = defaultText;
+      }
+    });
+  });
+</script>

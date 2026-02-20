@@ -1,0 +1,58 @@
+---
+import type { Locale } from '../config/affiliate';
+import { CTA_TEXT } from '../config/affiliate';
+
+interface SourceItem {
+  label: string;
+  url: string;
+}
+
+interface Props {
+  locale: Locale;
+  sources?: SourceItem[];
+}
+
+const { locale, sources = [] } = Astro.props;
+const cta = CTA_TEXT[locale];
+
+const labels = locale === 'fr'
+  ? {
+      sources: 'Sources',
+      disclosureTitle: 'Divulgation',
+      noSources: 'Aucune source externe listee pour cet article.',
+    }
+  : {
+      sources: 'Sources',
+      disclosureTitle: 'Disclosure',
+      noSources: 'No external sources listed for this article.',
+    };
+---
+
+<section class="mt-8 space-y-4">
+  <div class="rounded-2xl border border-dark-700 bg-dark-900/65 p-4 md:p-5">
+    <h2 class="text-base md:text-lg font-bold text-white mb-3">{labels.sources}</h2>
+    {sources.length > 0 ? (
+      <ul class="space-y-2">
+        {sources.map((source) => (
+          <li class="text-sm text-gray-300">
+            <a
+              href={source.url}
+              rel="nofollow noopener noreferrer"
+              target="_blank"
+              class="text-brand-300 hover:text-brand-200 underline"
+            >
+              {source.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p class="text-sm text-gray-400">{labels.noSources}</p>
+    )}
+  </div>
+
+  <div class="rounded-2xl border border-dark-700 bg-dark-900/65 p-4 md:p-5">
+    <h2 class="text-base md:text-lg font-bold text-white mb-2">{labels.disclosureTitle}</h2>
+    <p class="text-sm text-gray-300">{cta.affiliateDisclosure}</p>
+  </div>
+</section>

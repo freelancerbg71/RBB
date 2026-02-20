@@ -1,0 +1,27 @@
+---
+import type { Locale } from '../config/affiliate';
+
+const { locale, active } = Astro.props as { locale: Locale; active: 'all' | 'guides' | 'insights' };
+const base = locale === 'en' ? '/blog' : '/fr/blog';
+
+const tabs = [
+  { key: 'all' as const, href: base, label: locale === 'en' ? 'All' : 'Tous' },
+  { key: 'guides' as const, href: `${base}/guides`, label: locale === 'en' ? 'Guides' : 'Guides' },
+  { key: 'insights' as const, href: `${base}/insights`, label: locale === 'en' ? 'Insights' : 'Insights' },
+];
+---
+
+<div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+  {tabs.map((tab) => (
+    <a
+      href={tab.href}
+      class={
+        tab.key === active
+          ? 'px-4 py-2 rounded-full bg-brand-500 text-white text-sm font-medium whitespace-nowrap'
+          : 'px-4 py-2 rounded-full bg-dark-800 text-gray-300 hover:text-white text-sm font-medium whitespace-nowrap border border-dark-700 hover:border-brand-500/50 transition-colors'
+      }
+    >
+      {tab.label}
+    </a>
+  ))}
+</div>

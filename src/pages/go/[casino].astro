@@ -1,0 +1,109 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import { AFFILIATE_LINKS, CASINO_INFO, type Casino, type Locale } from '../../config/affiliate';
+
+export function getStaticPaths() {
+  const casinos: Casino[] = ['privateclub', 'barbossabet'];
+  return casinos.map((casino) => ({ params: { casino } }));
+}
+
+const locale: Locale = 'en';
+const casino = Astro.params.casino as Casino;
+const info = CASINO_INFO[casino];
+const outbound = AFFILIATE_LINKS[casino][locale];
+
+const title = `Continue to ${info.name} | Read Between Bets`;
+const description = `Outbound link notice for ${info.name}. Informational site; availability varies by location.`;
+
+const redirectSeconds = 2;
+const outboundEvent = {
+  casino,
+  locale,
+};
+---
+
+<Layout title={title} description={description} locale={locale} alternates={{ en: `/go/${casino}/`, fr: `/fr/go/${casino}/` }} noindex={true}>
+  <section class="section-padding max-w-3xl mx-auto py-16">
+    <div class="bg-dark-800 rounded-2xl border border-dark-700 p-8">
+      <h1 class="text-2xl sm:text-3xl font-bold text-white mb-3">Leaving Read Between Bets</h1>
+      <p class="text-gray-300 mb-6">
+        You are about to visit <span class="text-white font-semibold">{info.name}</span>.
+        This link may be unavailable in some locations (including the US/UK). Availability depends on local laws.
+      </p>
+
+      <div class="bg-dark-900 rounded-xl border border-dark-700 p-4 mb-6">
+        <p class="text-gray-400 text-sm">
+          Some links on this site are affiliate links. If you register and make a deposit after clicking, we may receive a commission.
+        </p>
+      </div>
+
+      <p class="text-gray-400 text-sm mb-6">
+        You will be redirected automatically in <span id="countdown" class="text-white font-semibold">{redirectSeconds}</span> seconds.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a
+          id="continue-outbound"
+          href={outbound}
+          rel="sponsored nofollow"
+          class="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-semibold transition-colors"
+        >
+          Continue
+        </a>
+        <a
+          id="cancel-outbound"
+          href="/"
+          class="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-dark-700 hover:bg-dark-600 text-gray-200 font-semibold transition-colors"
+        >
+          Go back
+        </a>
+      </div>
+
+      <noscript>
+        <p class="text-gray-400 text-sm mt-6">
+          JavaScript is disabled. Use the Continue button above to proceed.
+        </p>
+      </noscript>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline define:vars={{ redirectSeconds, outbound, outboundEvent }}>
+  (() => {
+    const track = (action) => {
+      const detail = { ...outboundEvent, action };
+      window.dispatchEvent(new CustomEvent('rbb:outbound', { detail }));
+      if (typeof window.plausible === 'function') {
+        window.plausible('Outbound Click', { props: detail });
+      }
+    };
+
+    const continueLink = document.getElementById('continue-outbound');
+    const cancelLink = document.getElementById('cancel-outbound');
+    continueLink?.addEventListener('click', () => track('manual_continue'));
+    cancelLink?.addEventListener('click', () => track('cancel'));
+
+    const seconds = Number(redirectSeconds);
+    const el = document.getElementById('countdown');
+    if (!Number.isFinite(seconds) || seconds <= 0) return;
+
+    let remaining = seconds;
+
+    const render = () => {
+      if (el) el.textContent = String(Math.max(0, remaining));
+    };
+
+    // Show initial value, then count down once per second.
+    render();
+
+    const timer = window.setInterval(() => {
+      remaining -= 1;
+      render();
+      if (remaining <= 0) {
+        window.clearInterval(timer);
+        track('auto_redirect');
+        window.location.href = outbound;
+      }
+    }, 1000);
+  })();
+</script>

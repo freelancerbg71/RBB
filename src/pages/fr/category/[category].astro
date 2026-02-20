@@ -1,0 +1,33 @@
+﻿---
+import CategoryPage from '../../category/[category].astro';
+import { type Locale } from '../../../config/affiliate';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const locale: Locale = 'fr';
+
+  const posts = await getCollection('blog', ({ data }) => data.locale === 'fr' && data.postType === 'guide');
+  const toSlug = (input: string): string =>
+    input
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+  const seen = new Set<string>();
+  for (const p of posts) {
+    if (!p.data.category) continue;
+    seen.add(toSlug(p.data.category));
+  }
+
+  const preferredOrder = ['slots', 'crash-games', 'live-casino', 'table-games', 'strategy'];
+  const categorySlugs = preferredOrder.concat([...seen].filter((s) => !preferredOrder.includes(s)));
+
+  return categorySlugs.map((category) => ({
+    params: { category },
+    props: { locale },
+  }));
+}
+---
+
+<CategoryPage locale="fr" />

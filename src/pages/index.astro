@@ -113,7 +113,7 @@ const latestGrid = recentPosts.slice(1, 7);
   <section class="relative overflow-hidden border-b border-white/10">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_74%_5%,rgba(236,72,153,0.26),transparent_32%),radial-gradient(circle_at_0%_100%,rgba(251,191,36,0.14),transparent_28%)]"></div>
     <div class="relative section-padding max-w-7xl mx-auto py-14 sm:py-16 lg:py-20">
-      <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+      <div class="grid gap-10 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
         <div>
           <p class="eyebrow mb-5">{h.badge}</p>
           <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl leading-[1.06] text-white max-w-2xl headline-balance">
@@ -148,23 +148,23 @@ const latestGrid = recentPosts.slice(1, 7);
           </div>
         </div>
 
-        <aside class="p-6 lg:p-7 border-l border-white/5 h-full">
-          <p class="eyebrow mb-5 text-gray-400">{h.panelTitle}</p>
+        <aside class="py-6 lg:py-0 lg:pl-10 lg:pr-0 border-l border-white/5 h-full flex flex-col justify-center">
+          <p class="eyebrow mb-6 text-gray-400">{h.panelTitle}</p>
           <div class="space-y-6">
             {heroPanelPosts.map((post, index) => (
               <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="group flex items-start gap-4 transition-colors">
-                <div class="shrink-0 w-8 text-brand-500 font-mono text-xl leading-none pt-0.5">
+                <div class="shrink-0 w-8 text-brand-500 font-sans text-xl leading-none pt-0.5">
                   {String(index + 1).padStart(2, '0')}
                 </div>
                 <div class="min-w-0">
                   <p class="text-gray-300 text-sm font-semibold leading-snug line-clamp-2 group-hover:text-white transition-colors">{post.data.title}</p>
-                  <p class="mt-1 text-xs text-brand-500/60 font-mono uppercase tracking-widest">{post.data.category}</p>
+                  <p class="mt-1 text-xs text-brand-500/60 font-sans uppercase tracking-widest">{post.data.category}</p>
                 </div>
               </a>
             ))}
           </div>
 
-          <p class="mt-8 text-xs text-gray-500 font-mono border-t border-white/5 pt-4">{h.geoNote}</p>
+          <p class="mt-8 text-xs text-gray-500 font-sans border-t border-white/5 pt-4">{h.geoNote}</p>
         </aside>
       </div>
     </div>
@@ -204,7 +204,7 @@ const latestGrid = recentPosts.slice(1, 7);
                 <img src={getDefaultHeroImageForPost(featuredPosts[0])} alt={featuredPosts[0].data.title} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
               </div>
               <div>
-                <p class="text-brand-500 font-mono uppercase tracking-widest text-xs mb-3">{featuredPosts[0].data.category}</p>
+                <p class="text-brand-500 font-sans uppercase tracking-widest text-xs mb-3">{featuredPosts[0].data.category}</p>
                 <h3 class="text-3xl font-display text-white leading-tight line-clamp-2 group-hover:text-brand-100 transition-colors">{featuredPosts[0].data.title}</h3>
                 <p class="mt-4 text-gray-400 line-clamp-2 leading-relaxed text-lg">{featuredPosts[0].data.description}</p>
               </div>
@@ -219,7 +219,7 @@ const latestGrid = recentPosts.slice(1, 7);
                      <img src={getDefaultHeroImageForPost(post)} alt={post.data.title} class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" loading="lazy" />
                   </div>
                   <div class="min-w-0">
-                    <p class="text-brand-500 font-mono uppercase tracking-widest text-xs mb-2">{post.data.category}</p>
+                    <p class="text-brand-500 font-sans uppercase tracking-widest text-xs mb-2">{post.data.category}</p>
                     <h3 class="text-xl text-gray-200 font-semibold leading-snug line-clamp-2 group-hover:text-white transition-colors">{post.data.title}</h3>
                   </div>
                 </a>
@@ -249,7 +249,7 @@ const latestGrid = recentPosts.slice(1, 7);
                 <img src={getDefaultHeroImageForPost(latestLead)} alt={latestLead.data.title} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
               </div>
               <div>
-                <p class="text-brand-500 font-mono uppercase tracking-widest text-xs mb-3">{latestLead.data.category}</p>
+                <p class="text-brand-500 font-sans uppercase tracking-widest text-xs mb-3">{latestLead.data.category}</p>
                 <h3 class="text-3xl font-display text-white leading-tight line-clamp-2 group-hover:text-brand-100 transition-colors">{latestLead.data.title}</h3>
                 <p class="mt-4 text-gray-400 line-clamp-3 leading-relaxed text-lg">{latestLead.data.description}</p>
               </div>
@@ -261,9 +261,9 @@ const latestGrid = recentPosts.slice(1, 7);
           {latestGrid.map((post) => (
             <article class="group">
               <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="block">
-                <p class="text-brand-500 font-mono uppercase tracking-widest text-[10px] mb-2">{post.data.category}</p>
+                <p class="text-brand-500 font-sans uppercase tracking-widest text-[10px] mb-2">{post.data.category}</p>
                 <h3 class="text-xl text-gray-300 font-semibold leading-snug line-clamp-2 group-hover:text-white transition-colors">{post.data.title}</h3>
-                <p class="mt-2 text-sm text-gray-500 font-mono">{post.data.pubDate.toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                <p class="mt-2 text-sm text-gray-500 font-sans">{post.data.pubDate.toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
               </a>
             </article>
           ))}

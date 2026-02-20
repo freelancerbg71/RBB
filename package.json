@@ -1,0 +1,55 @@
+{
+  "name": "readbetweenbets",
+  "version": "1.0.0",
+  "description": "Expert casino game guides and strategies affiliate website",
+  "type": "module",
+  "scripts": {
+    "prebuild": "node scripts/text-guard.mjs",
+    "dev": "astro dev --host",
+    "start": "astro dev --host",
+    "build": "astro build",
+    "typecheck": "astro check",
+    "preview": "astro preview",
+    "astro": "astro",
+    "lint:text": "node scripts/text-guard.mjs",
+    "lint:content": "node scripts/content-lint.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "img:webp": "node scripts/convert-png-to-webp.mjs",
+    "report:stale": "node scripts/stale-content-report.mjs",
+    "test:smoke": "playwright test tests/routes.smoke.spec.ts",
+    "test:a11y": "playwright test tests/metadata-and-a11y.spec.ts",
+    "og:one": "node scripts/generate-og-image.mjs"
+  },
+  "keywords": [
+    "casino",
+    "affiliate",
+    "gambling",
+    "slots",
+    "crash-games",
+    "blog"
+  ],
+  "author": "Read Between Bets Team",
+  "license": "ISC",
+  "dependencies": {
+    "@astrojs/mdx": "^4.3.13",
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.7.0",
+    "@astrojs/tailwind": "^5.1.5",
+    "@resvg/resvg-js": "^2.6.2",
+    "astro": "^5.17.1",
+    "autoprefixer": "^10.4.24",
+    "gray-matter": "^4.0.3",
+    "postcss": "^8.5.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "satori": "^0.19.2",
+    "tailwindcss": "^3.4.19"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.6",
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.58.2",
+    "sharp": "^0.34.5",
+    "typescript": "^5.9.3"
+  }
+}

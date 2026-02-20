@@ -1,0 +1,267 @@
+﻿---
+import '../styles/global.css';
+import { NAV_TEXT, UI_TEXT, type Locale } from '../config/affiliate';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  locale?: Locale;
+  // Optional explicit alternates (language-only). If not provided, do not emit
+  // hreflang links to avoid pointing at non-existent translations.
+  alternates?: Partial<Record<Locale, string>>;
+  noindex?: boolean;
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
+}
+
+const { 
+  title, 
+  description, 
+  image = '/img/brand/favicon-mark.png',
+  alternates = {},
+  noindex = false,
+  jsonLd
+} = Astro.props;
+
+const pathLocale: Locale = Astro.url.pathname.startsWith('/fr') ? 'fr' : 'en';
+const locale: Locale = pathLocale;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const currentPath = Astro.url.pathname;
+
+const t = NAV_TEXT[locale];
+const ui = UI_TEXT[locale];
+const jsonLdItems = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
+const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
+---
+
+<!DOCTYPE html>
+<html lang={locale}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="generator" content={Astro.generator} />
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href={canonicalURL} />
+  
+  <!-- Alternate language -->
+  {alternates.en && <link rel="alternate" hreflang="en" href={new URL(alternates.en, Astro.site)} />}
+  {alternates.fr && <link rel="alternate" hreflang="fr" href={new URL(alternates.fr, Astro.site)} />}
+  <link rel="alternate" hreflang="x-default" href={new URL(alternates.en ?? currentPath, Astro.site)} />
+  
+  <!-- Primary Meta Tags -->
+  <title>{title}</title>
+  <meta name="title" content={title} />
+  <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex,nofollow" />}
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={new URL(image, Astro.site)} />
+  <meta property="og:locale" content={locale === 'en' ? 'en_US' : 'fr_FR'} />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={canonicalURL} />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description} />
+  <meta property="twitter:image" content={new URL(image, Astro.site)} />
+  
+  {plausibleDomain && (
+    <script
+      defer
+      data-domain={plausibleDomain}
+      src="https://plausible.io/js/script.js"
+    ></script>
+  )}
+  {jsonLdItems.map((item) => (
+    <script type="application/ld+json" set:html={JSON.stringify(item)}></script>
+  ))}
+</head>
+<body class="min-h-screen flex flex-col">
+  <div class="fixed top-0 left-0 right-0 z-[60] h-0.5 bg-dark-700/80">
+    <div id="reading-progress" class="h-full w-0 bg-gradient-to-r from-brand-500 to-accent-400 transition-[width] duration-150"></div>
+  </div>
+
+  <!-- Geo Disclaimer Banner -->
+  <div class="bg-dark-800 border-b border-dark-700 py-2 px-4">
+    <div class="max-w-7xl mx-auto text-center">
+      <p class="text-xs text-gray-500">Warning: {ui.geoDisclaimer} {ui.notFinancialAdvice}</p>
+    </div>
+  </div>
+
+  <!-- Sticky Header -->
+  <header class="sticky top-0 z-50 bg-dark-700/92 backdrop-blur-md border-b border-brand-300/30">
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="flex items-center justify-between h-24 lg:h-28">
+        <!-- Logo -->
+        <a href={locale === 'en' ? '/' : '/fr/'} class="flex items-center group">
+          <img
+            src="/img/brand/rbb_logo.webp"
+            alt="Read Between Bets"
+            class="h-[5.5rem] sm:h-[6.5rem] lg:h-[7.25rem] w-auto object-contain [filter:drop-shadow(0_0_28px_rgba(253,230,138,1))_drop-shadow(0_0_56px_rgba(253,230,138,0.88))_drop-shadow(18px_0_42px_rgba(253,230,138,0.9))_drop-shadow(0_6px_12px_rgba(0,0,0,0.6))]"
+            loading="eager"
+            decoding="async"
+          />
+        </a>
+        
+        <!-- Desktop Navigation -->
+        <nav class="hidden lg:flex items-center gap-6">
+          <a href={locale === 'en' ? '/' : '/fr/'} class="text-gray-300 hover:text-white font-medium transition-colors">{t.home}</a>
+          <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="text-gray-300 hover:text-white font-medium transition-colors">{t.allGuides}</a>
+          <a href={locale === 'en' ? '/blog/insights' : '/fr/blog/insights'} class="text-gray-300 hover:text-white font-medium transition-colors">{t.insights}</a>
+          <a href={locale === 'en' ? '/tools' : '/fr/tools'} class="text-gray-300 hover:text-white font-medium transition-colors">{t.tools}</a>
+        </nav>
+        
+        <!-- Right Side: Language Switcher -->
+        <div class="flex items-center gap-2">
+          <!-- Language Switcher -->
+          <div class="relative group">
+            <button type="button" class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-800 text-gray-300 hover:text-white text-sm font-medium transition-colors border border-dark-700" aria-haspopup="true" aria-expanded="false" aria-label={locale === 'en' ? 'Switch language' : 'Changer de langue'}>
+              <span class="text-lg">{locale === 'en' ? 'EN' : 'FR'}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </button>
+            <div class="absolute top-full right-0 mt-2 w-32 bg-dark-800 rounded-xl border border-dark-700 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              {locale !== 'en' && (
+                <a href={alternates.en ?? '/'} class="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-dark-700 first:rounded-t-xl transition-colors">English</a>
+              )}
+              {locale !== 'fr' && (
+                <a href={alternates.fr ?? '/fr/'} class="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-dark-700 last:rounded-b-xl transition-colors">Francais</a>
+              )}
+            </div>
+          </div>
+          
+          <!-- Mobile Menu Button -->
+          <button id="mobile-menu-btn" type="button" class="lg:hidden p-2 text-gray-300 hover:text-white" aria-label={locale === 'en' ? 'Toggle navigation menu' : 'Basculer le menu de navigation'} aria-controls="mobile-menu" aria-expanded="false">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden lg:hidden bg-dark-800 border-t border-dark-700">
+      <div class="section-padding py-4 space-y-2">
+        <a href={locale === 'en' ? '/' : '/fr/'} class="block py-2 text-gray-300 hover:text-white font-medium">{t.home}</a>
+        <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="block py-2 text-gray-300 hover:text-white font-medium">{t.allGuides}</a>
+        <a href={locale === 'en' ? '/blog/insights' : '/fr/blog/insights'} class="block py-2 text-gray-300 hover:text-white font-medium">{t.insights}</a>
+        <a href={locale === 'en' ? '/tools' : '/fr/tools'} class="block py-2 text-gray-300 hover:text-white font-medium">{t.tools}</a>
+        
+        <!-- Language Switch Mobile -->
+        <div class="border-t border-dark-700 pt-2 mt-2">
+          <p class="text-gray-500 text-sm mb-2">{locale === 'en' ? 'Language' : 'Langue'}</p>
+          {locale !== 'en' && (
+            <a href={alternates.en ?? '/'} class="flex items-center gap-2 py-2 text-gray-300 hover:text-white">English</a>
+          )}
+          {locale !== 'fr' && (
+            <a href={alternates.fr ?? '/fr/'} class="flex items-center gap-2 py-2 text-gray-300 hover:text-white">Francais</a>
+          )}
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Main Content -->
+  <main class="flex-1">
+    <slot />
+  </main>
+  
+  <!-- Footer -->
+  <footer class="bg-dark-800 border-t border-dark-700">
+    <!-- Affiliate Disclosure -->
+    <div class="border-b border-dark-700 py-4">
+      <div class="section-padding max-w-7xl mx-auto">
+        <p class="text-xs text-gray-500 text-center">
+          {ui.affiliateDisclosure}
+        </p>
+      </div>
+    </div>
+    
+    <div class="section-padding max-w-7xl mx-auto py-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Brand -->
+        <div class="lg:col-span-2">
+          <a href={locale === 'en' ? '/' : '/fr/'} class="flex items-center gap-2 mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden border border-dark-700 bg-dark-800">
+              <img src="/img/brand/spy-main.webp" alt="Spy Character" class="w-[120%] h-auto object-contain mt-1" loading="lazy" />
+            </div>
+            <span class="font-display font-bold text-xl text-white">
+              Read<span class="text-brand-400">Between</span>Bets
+            </span>
+          </a>
+          <p class="text-gray-400 max-w-md">
+            {ui.footerTagline}
+          </p>
+        </div>
+        
+        <!-- Quick Links -->
+        <div>
+          <h3 class="text-white font-semibold mb-4">{ui.quickLinks}</h3>
+          <ul class="space-y-2">
+            <li><a href={locale === 'en' ? '/' : '/fr/'} class="text-gray-400 hover:text-brand-400 transition-colors">{t.home}</a></li>
+            <li><a href={locale === 'en' ? '/blog' : '/fr/blog'} class="text-gray-400 hover:text-brand-400 transition-colors">{t.allGuides}</a></li>
+            <li><a href={locale === 'en' ? '/tools' : '/fr/tools'} class="text-gray-400 hover:text-brand-400 transition-colors">{t.tools}</a></li>
+            <li><a href={locale === 'en' ? '/about' : '/fr/about'} class="text-gray-400 hover:text-brand-400 transition-colors">{locale === 'en' ? 'About' : 'A propos'}</a></li>
+            <li><a href="https://forms.gle/xSuqVRNpyWNVFa4BA" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-brand-400 transition-colors">{locale === 'en' ? 'Contact' : 'Contact'}</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div>
+          <h3 class="text-white font-semibold mb-4">{ui.legal}</h3>
+          <ul class="space-y-2">
+            <li><a href={locale === 'en' ? '/privacy' : '/fr/privacy'} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.privacyPolicy}</a></li>
+            <li><a href={locale === 'en' ? '/terms' : '/fr/terms'} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.termsOfService}</a></li>
+            <li><a href={locale === 'en' ? '/responsible-gambling' : '/fr/responsible-gambling'} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.responsibleGambling}</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="border-t border-dark-700 mt-12 pt-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p class="text-gray-500 text-sm text-center sm:text-left">(c) {new Date().getFullYear()} ReadBetweenBets.com. {ui.eighteenPlus} {ui.gambleResponsibly}</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+  <!-- Easter Egg -->
+  <div class="fixed bottom-0 right-0 z-50 overflow-hidden pointer-events-none w-24 md:w-32 -mb-8 md:-mb-10 mr-2 md:mr-8 opacity-0 hover:opacity-100 transition-opacity duration-1000">
+    <img src="/img/brand/spy-easter.webp" alt="" class="w-full h-auto object-contain pointer-events-auto cursor-help" title="Nothing to see here..." />
+  </div>
+  
+  <script>
+    // Reading progress indicator.
+    const progress = document.getElementById('reading-progress');
+    const updateReadingProgress = () => {
+      if (!progress) return;
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = docHeight <= 0 ? 0 : Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
+      progress.style.width = `${percent}%`;
+    };
+
+    window.addEventListener('scroll', updateReadingProgress, { passive: true });
+    window.addEventListener('resize', updateReadingProgress);
+    updateReadingProgress();
+
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuBtn?.addEventListener('click', () => {
+      mobileMenu?.classList.toggle('hidden');
+      const expanded = mobileMenuBtn.getAttribute('aria-expanded') === 'true';
+      mobileMenuBtn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    });
+  </script>
+</body>
+</html>

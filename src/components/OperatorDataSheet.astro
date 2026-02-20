@@ -1,0 +1,69 @@
+---
+interface Props {
+  operatorName: string;
+  license: string;
+  gameAvailable: string;
+  acceptedCurrencies: string;
+  kycFriction: string;
+  clipboardNote: string;
+  linkUrl: string;
+}
+
+const { 
+  operatorName, 
+  license, 
+  gameAvailable, 
+  acceptedCurrencies, 
+  kycFriction, 
+  clipboardNote,
+  linkUrl 
+} = Astro.props;
+---
+
+<div class="my-8 bg-[#111] border-l-4 border-yellow-500 rounded text-gray-200 shadow-xl overflow-hidden">
+  <div class="bg-gray-800 px-4 py-3 border-b border-gray-700 font-bold uppercase tracking-wider text-sm flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+      Operator Datasheet
+    </div>
+    <span class="text-white bg-gray-900 px-3 py-1 rounded text-xs border border-gray-700">{operatorName}</span>
+  </div>
+  <div class="p-4 bg-gray-900">
+    <table class="w-full text-sm mb-5 text-left">
+      <tbody>
+        <tr class="border-b border-gray-800">
+          <td class="py-2 text-gray-400 font-medium w-1/3">Licensing</td>
+          <td class="py-2 font-sans text-gray-200">{license}</td>
+        </tr>
+        <tr class="border-b border-gray-800">
+          <td class="py-2 text-gray-400 font-medium">Platform / Game</td>
+          <td class="py-2 font-sans text-gray-200">{gameAvailable}</td>
+        </tr>
+        <tr class="border-b border-gray-800">
+          <td class="py-2 text-gray-400 font-medium">Funding</td>
+          <td class="py-2 font-sans text-gray-200">{acceptedCurrencies}</td>
+        </tr>
+        <tr>
+          <td class="py-2 text-gray-400 font-medium">KYC Friction</td>
+          <td class="py-2 font-sans text-gray-200">{kycFriction}</td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div class="bg-yellow-900/10 rounded p-3 mb-5 text-sm border border-yellow-900/30 font-sans">
+      <span class="font-bold text-yellow-600 mr-2 uppercase text-xs tracking-wider">Note:</span>
+      <span class="text-gray-400">{clipboardNote}</span>
+    </div>
+    
+    <div class="text-right">
+      <a 
+        href={linkUrl} 
+        target="_blank"
+        rel="sponsored nofollow"
+        class="inline-block bg-gray-800 hover:bg-gray-700 border border-gray-600 text-yellow-500 font-sans text-xs font-bold px-6 py-3 rounded transition-colors uppercase tracking-widest"
+      >
+        [ Access Operator ]
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+---
+interface Props {
+  title?: string;
+  type?: 'neutral' | 'warning' | 'tip';
+}
+const { title = "Clipboard Note:", type = 'neutral' } = Astro.props;
+
+const variants = {
+  neutral: { border: "border-gray-500", text: "text-gray-300", bg: "bg-gray-800", icon: "text-gray-400" },
+  warning: { border: "border-red-500", text: "text-red-200", bg: "bg-red-900/20", icon: "text-red-400" },
+  tip: { border: "border-green-500", text: "text-green-200", bg: "bg-green-900/20", icon: "text-green-400" }
+};
+
+const v = variants[type];
+---
+<div class={`my-6 pl-4 pr-4 py-3 border-l-4 rounded-r shadow-md font-sans text-sm ${v.border} border-t border-b border-r border-gray-800 ${v.bg}`}>
+  <div class={`font-bold mb-1 uppercase tracking-wider text-xs flex items-center gap-2 ${v.icon}`}>
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    {title}
+  </div>
+  <div class={`leading-relaxed ${v.text}`}>
+    <slot />
+  </div>
+</div>

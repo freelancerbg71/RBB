@@ -1,0 +1,313 @@
+﻿---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { UI_TEXT, CTA_TEXT, type Locale, type Casino } from '../../config/affiliate';
+import { getDefaultHeroImageForPost } from '../../utils/blog-hero';
+import React from 'react';
+import AffiliateCard from '../../components/AffiliateCard.astro';
+import ShareButtons from '../../components/ShareButtons.astro';
+import ClipboardNote from '../../components/ClipboardNote.astro';
+import { toKnownCategorySlug } from '../../utils/category';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => (data.locale ?? 'en') === 'en');
+  const paths = [];
+  
+  for (const post of posts) {
+    paths.push({
+      params: { slug: post.data.urlSlug },
+      props: { post, locale: 'en' },
+    });
+  }
+  
+  return paths;
+}
+
+const { post, locale } = Astro.props as { post: any; locale: Locale };
+const { Content } = await post.render();
+
+// Get related posts in same locale
+const allPosts = await getCollection('blog', ({ data }) => data.locale === locale);
+const relatedPosts = allPosts
+  .filter(p => p.data.category === post.data.category && p.data.urlSlug !== post.data.urlSlug)
+  .slice(0, 3);
+
+// Only emit hreflang alternates when a real translation exists.
+const hasFrTranslation =
+  (await getCollection('blog', ({ data }) => data.locale === 'fr' && data.urlSlug === post.data.urlSlug)).length > 0;
+const alternates = {
+  en: `/blog/${post.data.urlSlug}/`,
+  ...(hasFrTranslation ? { fr: `/fr/blog/${post.data.urlSlug}/` } : {}),
+};
+
+const ui = UI_TEXT[locale as Locale];
+const cta = CTA_TEXT[locale as Locale];
+
+// Get both casinos for neutral listing
+const casinos: Casino[] = ['privateclub', 'barbossabet'];
+
+// Translations
+const t = {
+  en: {
+    breadcrumbsHome: 'Home',
+    breadcrumbsGuides: 'Guides',
+    tags: 'Tags',
+    relatedGuides: 'Related Guides',
+    youMightLike: 'You might also like',
+    educationalPurpose: 'This guide explains how the game works and where it can be played, subject to local laws.',
+    riskWarning: 'Risk Warning',
+    riskText: 'Gambling involves risk. Only play with money you can afford to lose.',
+  },
+  fr: {
+    breadcrumbsHome: 'Accueil',
+    breadcrumbsGuides: 'Guides',
+    tags: 'Tags',
+    relatedGuides: 'Guides Connexes',
+    youMightLike: 'Vous aimerez peut-etre',
+    educationalPurpose: 'Ce guide explique comment fonctionne le jeu et ou il peut etre joue, sous reserve des lois locales.',
+    riskWarning: 'Avertissement sur les Risques',
+    riskText: 'Les jeux d\'argent impliquent des risques. Ne jouez qu\'avec de l\'argent que vous pouvez vous permettre de perdre.',
+  },
+}[locale];
+
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const articleImage = new URL(getDefaultHeroImageForPost(post), Astro.site).toString();
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+  inLanguage: locale,
+  author: {
+    '@type': 'Organization',
+    name: post.data.author,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Read Between Bets',
+  },
+  image: articleImage,
+  mainEntityOfPage: canonical,
+};
+const categorySlug = toKnownCategorySlug(post.data.category);
+const sectionHref =
+  post.data.postType === 'news' || categorySlug === 'news' || categorySlug.length === 0
+    ? (locale === 'en' ? '/blog/news' : '/fr/blog/news')
+    : (locale === 'en' ? `/category/${categorySlug}` : `/fr/category/${categorySlug}`);
+---
+
+<Layout 
+  title={`${post.data.title} | Read Between Bets`}
+  description={post.data.description}
+  locale={locale as Locale}
+  alternates={alternates}
+  jsonLd={jsonLd}
+>
+  <!-- Hero Section -->
+  <section class="relative">
+    <div class="aspect-[21/9] md:aspect-[3/1] w-full overflow-hidden">
+      <img
+        src={getDefaultHeroImageForPost(post)}
+        alt={post.data.title}
+        class="w-full h-full object-cover"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent"></div>
+    </div>
+    
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="relative -mt-20 md:-mt-32 mb-8">
+        <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6 md:p-8 shadow-xl">
+          <!-- Breadcrumbs -->
+          <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <a href={locale === 'en' ? '/' : '/fr/'} class="hover:text-brand-400 transition-colors">{t.breadcrumbsHome}</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="hover:text-brand-400 transition-colors">{t.breadcrumbsGuides}</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <span class="text-gray-400 truncate">{post.data.title}</span>
+          </nav>
+          
+          <!-- Tags -->
+          <div class="flex items-center gap-2 mb-4 flex-wrap">
+            <a 
+              href={sectionHref}
+              class="px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-sm font-medium hover:bg-brand-500/20 transition-colors"
+            >
+              {post.data.category}
+            </a>
+            {post.data.rtp && (
+              <span class="px-3 py-1 rounded-full bg-gray-500/10 text-gray-400 text-sm font-medium">
+                RTP {post.data.rtp}
+              </span>
+            )}
+            {post.data.gameProvider && (
+              <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium">
+                {post.data.gameProvider}
+              </span>
+            )}
+          </div>
+          
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">{post.data.title}</h1>
+          <p class="text-lg md:text-xl text-gray-400 mb-6">{post.data.description}</p>
+          
+          <!-- Educational Purpose Notice -->
+          <div class="flex items-start gap-3 p-4 bg-dark-900 rounded-xl border border-dark-700 mb-4">
+            <svg class="w-5 h-5 text-brand-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-gray-400 text-sm">{t.educationalPurpose}</p>
+          </div>
+          
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border border-dark-700 bg-dark-800 shrink-0 shadow-lg">
+                <img src="/img/brand/spy-main.webp" alt={post.data.author} class="w-[120%] h-auto object-contain mt-2" loading="lazy" />
+              </div>
+              <div>
+                <p class="text-white font-medium">{post.data.author}</p>
+                <p class="text-gray-500 text-sm">
+                  {post.data.pubDate.toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </p>
+              </div>
+            </div>
+            <ShareButtons locale={locale as Locale} title={post.data.title} url={canonical} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Content Section -->
+  <section class="section-padding max-w-7xl mx-auto pb-16">
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- Main Content -->
+      <div class="lg:col-span-2">
+        <article class="prose prose-invert prose-lg max-w-none">
+          <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6 md:p-8">
+            <Content />
+          </div>
+        </article>
+
+        {relatedPosts.length > 0 && (
+          <section class="mt-12 pt-8 border-t border-dark-700">
+            <h2 class="text-xl font-bold text-white mb-6 uppercase tracking-wider">{t.relatedGuides}</h2>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {relatedPosts.map((related) => (
+                <a
+                  href={locale === 'en' ? `/blog/${related.data.urlSlug}` : `/fr/blog/${related.data.urlSlug}`}
+                  class="group block"
+                >
+                  <p class="text-xs text-brand-400 font-sans mb-1 uppercase tracking-wider">{related.data.category}</p>
+                  <h3 class="text-sm font-semibold text-gray-300 group-hover:text-white transition-colors line-clamp-2 leading-relaxed">{related.data.title}</h3>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+        
+        <!-- Risk Warning -->
+        <div class="mt-12">
+          <ClipboardNote type="warning" title={t.riskWarning}>
+            <p class="mt-1">{t.riskText}</p>
+          </ClipboardNote>
+        </div>
+        <!-- Tags -->
+        {post.data.tags.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-white font-semibold mb-3">{t.tags}</h3>
+            <div class="flex flex-wrap gap-2">
+              {post.data.tags.map((tag: string) => (
+                <span class="px-3 py-1 rounded-full bg-dark-800 text-gray-400 text-sm border border-dark-700">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+      
+      <!-- Sidebar -->
+      <aside class="space-y-12 lg:pl-8 lg:border-l lg:border-dark-700 pb-16">
+        <div class="lg:sticky lg:top-24 space-y-12">
+          {/* Where to Play - Neutral Listing */}
+          {post.data.postType !== 'news' && (
+            <div>
+              <h3 class="text-lg font-bold text-white mb-1 uppercase tracking-wider">{ui.whereToPlay}</h3>
+              <p class="text-gray-500 text-xs mb-6 max-w-xs">{ui.availabilityNote}</p>
+
+              <div class="flex flex-col">
+                {casinos.map((casinoKey) => {
+                  const link = locale === 'en' ? `/go/${casinoKey}` : `/fr/go/${casinoKey}`;
+                  return (
+                    <AffiliateCard
+                      casinoKey={casinoKey}
+                      locale={locale as Locale}
+                      href={link}
+                      ctaLabel={cta.viewGuide}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          
+          {/* Related Posts */}
+          {relatedPosts.length > 0 && (
+            <div>
+              <h3 class="text-lg font-bold text-white mb-6 uppercase tracking-wider">{t.relatedGuides}</h3>
+              <div class="space-y-6">
+                {relatedPosts.map(related => (
+                  <a href={locale === 'en' ? `/blog/${related.data.urlSlug}` : `/fr/blog/${related.data.urlSlug}`} class="flex gap-4 group items-start">
+                    <div class="w-16 h-16 bg-dark-800 flex items-center justify-center flex-shrink-0 overflow-hidden border border-dark-700">
+                      <img
+                        src={getDefaultHeroImageForPost(related)}
+                        alt={related.data.title}
+                        class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                        loading="lazy"
+                      />
+                    </div>
+                    <div>
+                      <h4 class="text-gray-400 font-medium text-sm group-hover:text-white transition-colors line-clamp-2 leading-snug">{related.data.title}</h4>
+                      <span class="text-brand-500 text-xs font-sans uppercase tracking-wider mt-1 block">{related.data.category}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </aside>
+    </div>
+  </section>
+  
+  {/* Related Posts Section */}
+  {relatedPosts.length > 0 && (
+    <section class="border-t border-dark-700 py-16 lg:py-24">
+      <div class="section-padding max-w-7xl mx-auto">
+        <h2 class="text-2xl font-bold text-white mb-10 text-center uppercase tracking-wider">{t.youMightLike}</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+          {relatedPosts.map(post => (
+            <article class="group cursor-pointer">
+              <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="block">
+                <div class="aspect-[4/3] bg-dark-800 relative overflow-hidden mb-4 rounded">
+                  <img
+                    src={getDefaultHeroImageForPost(post)}
+                    alt={post.data.title}
+                    class="w-full h-full object-cover scale-100 group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                </div>
+                <div>
+                  <span class="text-xs text-brand-500 font-sans tracking-wider uppercase">{post.data.category}</span>
+                  <h3 class="text-white font-semibold mt-2 text-lg line-clamp-2 group-hover:text-brand-400 transition-colors">{post.data.title}</h3>
+                </div>
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+</Layout>
+\n
+
