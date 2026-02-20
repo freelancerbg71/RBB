@@ -9,3 +9,18 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .DS_Store
+
+# Internal notes and documents
+journalist.md
+prep.md
+IMPROVEMENT-SUGGESTIONS.md
+*.docx
+docs/
+
+# Internal scripts and temp assets
+Slots/
+Slots
+copy_*.cjs
+fetch_html.cjs
+fix-texts.cjs
+text-guard-errors.log
