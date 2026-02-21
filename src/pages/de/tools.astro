@@ -1,0 +1,161 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import AffiliateCard from '../../components/AffiliateCard.astro';
+import { UI_TEXT, CTA_TEXT, type Casino, type Locale } from '../../config/affiliate';
+
+const locale: Locale = 'fr';
+const title = 'Outils Casino : Cotes + Convertisseur de Frais Crypto | Read Between Bets';
+const description = 'Calculatrices pratiques pour convertir les cotes et comparer les frais reseau crypto.';
+const ui = UI_TEXT[locale];
+const cta = CTA_TEXT[locale];
+const casinos: Casino[] = ['privateclub', 'barbossabet'];
+---
+
+<Layout title={title} description={description} locale={locale} alternates={{ en: '/tools/', fr: '/de/tools/' }}>
+  <section class="relative py-16 border-b border-dark-700">
+    <div class="section-padding max-w-7xl mx-auto">
+      <p class="eyebrow mb-4">Boite a Outils Joueur</p>
+      <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4">Outils pratiques basés sur des données</h1>
+      <p class="text-lg text-gray-300 max-w-3xl">
+        Utilisez-les pour comparer les formats de cotes et reduire les frais crypto evitables.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-12">
+    <div class="section-padding max-w-7xl mx-auto grid gap-8 lg:grid-cols-2">
+      <article class="p-6 md:p-8 border border-dark-700 rounded-xl">
+        <h2 class="text-2xl font-bold text-white mb-3">Convertisseur de Cotes</h2>
+        <p class="text-gray-400 mb-6">
+          Convertissez entre cotes decimales, americaines et fractionnelles.
+        </p>
+        <form id="odds-form-de" class="space-y-4">
+          <label class="block">
+            <span class="text-sm text-gray-300">Format d'entree</span>
+            <select id="odds-type-fr" class="mt-1 w-full rounded-lg border border-dark-700 bg-dark-900 px-3 py-2 text-white">
+              <option value="decimal">Decimale (ex. 2.50)</option>
+              <option value="american">Americaine (ex. +150, -120)</option>
+              <option value="fractional">Fractionnelle (ex. 3/2)</option>
+            </select>
+          </label>
+          <label class="block">
+            <span class="text-sm text-gray-300">Valeur</span>
+            <input id="odds-input-fr" type="text" value="2.50" class="mt-1 w-full rounded-lg border border-dark-700 bg-dark-900 px-3 py-2 text-white" />
+          </label>
+          <button id="odds-submit-fr" type="submit" class="btn-primary w-full">Convertir</button>
+        </form>
+        <div class="mt-6 border-l-2 border-brand-400 pl-4 text-sm text-gray-300 space-y-2">
+          <p><span class="text-gray-500">Decimale :</span> <span id="decimal-out-fr" class="text-white">-</span></p>
+          <p><span class="text-gray-500">Americaine :</span> <span id="american-out-fr" class="text-white">-</span></p>
+          <p><span class="text-gray-500">Fractionnelle :</span> <span id="fractional-out-fr" class="text-white">-</span></p>
+          <p><span class="text-gray-500">Probabilite implicite :</span> <span id="probability-out-fr" class="text-white">-</span></p>
+        </div>
+      </article>
+
+      <article class="p-6 md:p-8 border border-dark-700 rounded-xl">
+        <p class="eyebrow mb-2">Controle Cout Reseau</p>
+        <h2 class="text-2xl font-bold text-white mb-3">Convertisseur de Frais Crypto</h2>
+        <p class="text-gray-400 mb-6">
+          Comparez BTC, LTC, ERC20 et TRC20 avant depot.
+        </p>
+        <a href="/de/tools/impact-frais" class="btn-primary">Ouvrir le convertisseur crypto</a>
+      </article>
+    </div>
+  </section>
+
+  <section class="pb-16">
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="rounded-2xl border border-dark-700 bg-dark-800 p-6 md:p-8">
+        <h2 class="text-2xl font-bold text-white mb-2">{ui.whereToPlay}</h2>
+        <p class="text-gray-400 text-sm mb-2">{ui.availabilityNote}</p>
+        <p class="text-gray-500 text-xs mb-2">{ui.availabilityWarning}</p>
+        <p class="text-gray-500 text-xs mb-6">{cta.affiliateDisclosure}</p>
+
+        <div class="grid gap-4 md:grid-cols-2">
+          {casinos.map((casinoKey) => (
+            <AffiliateCard
+              casinoKey={casinoKey}
+              locale={locale}
+              href={`/de/go/${casinoKey}`}
+              ctaLabel={cta.seeAvailability}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const toFractional = (decimalOdds: number) => {
+    const target = decimalOdds - 1;
+    let bestNumerator = 1;
+    let bestDenominator = 1;
+    let minError = Number.POSITIVE_INFINITY;
+
+    for (let denominator = 1; denominator <= 100; denominator += 1) {
+      const numerator = Math.round(target * denominator);
+      const value = numerator / denominator;
+      const error = Math.abs(value - target);
+
+      if (error < minError) {
+        minError = error;
+        bestNumerator = numerator;
+        bestDenominator = denominator;
+      }
+    }
+
+    return `${bestNumerator}/${bestDenominator}`;
+  };
+
+  const toAmerican = (decimalOdds: number) => {
+    if (decimalOdds >= 2) {
+      return `+${Math.round((decimalOdds - 1) * 100)}`;
+    }
+
+    return `${Math.round(-100 / (decimalOdds - 1))}`;
+  };
+
+  const parseInputToDecimal = (type: string, rawValue: string) => {
+    if (type === 'decimal') {
+      return Number.parseFloat(rawValue);
+    }
+
+    if (type === 'american') {
+      const american = Number.parseFloat(rawValue);
+      if (!Number.isFinite(american) || american === 0) {
+        return Number.NaN;
+      }
+      return american > 0 ? 1 + american / 100 : 1 + 100 / Math.abs(american);
+    }
+
+    const parts = rawValue.split('/');
+    if (parts.length !== 2) {
+      return Number.NaN;
+    }
+    const numerator = Number.parseFloat(parts[0]);
+    const denominator = Number.parseFloat(parts[1]);
+    if (!(numerator > 0) || !(denominator > 0)) {
+      return Number.NaN;
+    }
+    return 1 + numerator / denominator;
+  };
+
+  const oddsForm = document.getElementById('odds-form-de');
+  oddsForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const type = (document.getElementById('odds-type-fr') as HTMLSelectElement).value;
+    const input = (document.getElementById('odds-input-fr') as HTMLInputElement).value.trim();
+    const decimalOdds = parseInputToDecimal(type, input);
+
+    if (!(decimalOdds > 1)) {
+      return;
+    }
+
+    const impliedProbability = 100 / decimalOdds;
+    (document.getElementById('decimal-out-fr') as HTMLElement).textContent = decimalOdds.toFixed(2);
+    (document.getElementById('american-out-fr') as HTMLElement).textContent = toAmerican(decimalOdds);
+    (document.getElementById('fractional-out-fr') as HTMLElement).textContent = toFractional(decimalOdds);
+    (document.getElementById('probability-out-fr') as HTMLElement).textContent = `${impliedProbability.toFixed(2)}%`;
+  });
+</script>

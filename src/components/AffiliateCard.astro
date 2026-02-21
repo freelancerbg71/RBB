@@ -31,6 +31,13 @@ const iconUrl = casinoKey === 'privateclub' ? '/logo-05cd6f2bc249eaf4f439c0a4049
       </li>
     ))}
   </ul>
+  {(locale === 'ru' || (locale === 'de' && casinoKey !== 'privateclub')) && (
+    <div class="mb-4 text-[0.65rem] text-gray-400 bg-dark-800/50 border border-dark-600 rounded p-2 leading-snug">
+      {locale === 'de' 
+        ? 'Hinweis: Benutzeroberfläche und Kundendienst dieses Anbieters sind derzeit möglicherweise nur auf Englisch oder Französisch verfügbar.' 
+        : 'Примечание: интерфейс платформы и служба поддержки этого оператора в настоящее время доступны на английском и французском языках.'}
+    </div>
+  )}
   <a
     href={href}
     rel="sponsored nofollow"

@@ -1,0 +1,111 @@
+﻿---
+import Layout from '../../../layouts/Layout.astro';
+import BlogTabs from '../../../components/BlogTabs.astro';
+import { getCollection } from 'astro:content';
+import { UI_TEXT, type Locale } from '../../../config/affiliate';
+import { getDefaultHeroImageForPost } from '../../../utils/blog-hero';
+
+const locale: Locale = 'fr';
+
+const allPosts = await getCollection('blog', ({ data }) => data.locale === locale && data.postType === 'guide');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const categories = [...new Set(allPosts.map((post) => post.data.category))];
+
+const ui = UI_TEXT[locale];
+
+const title = 'Guides | Read Between Bets';
+const description = 'Guides educatifs: mecanismes, bases du RTP, volatilite, et points a verifier avant de jouer.';
+---
+
+<Layout title={title} description={description} locale={locale} alternates={{ en: '/blog/guides/', fr: '/de/blog/guides/' }}>
+  <section class="relative py-16 bg-dark-800/50 border-b border-dark-700">
+    <div class="section-padding max-w-7xl mx-auto">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4">Guides</h1>
+        <p class="text-gray-400 text-lg max-w-2xl">Guides educatifs ({sortedPosts.length}).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-6 border-b border-dark-700 sticky top-16 lg:top-20 bg-dark-900/95 backdrop-blur-md z-40">
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="flex flex-col gap-3">
+        <BlogTabs locale={locale} active="guides" />
+
+        <div class="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          <span class="text-gray-500 text-sm whitespace-nowrap">{ui.filterBy}</span>
+          <a href="/de/blog/guides" class="px-4 py-2 rounded-full bg-brand-500 text-white text-sm font-medium whitespace-nowrap">{ui.all}</a>
+          {categories.map((cat) => (
+            <a
+              href={`/de/category/${cat.toLowerCase().replace(/\s+/g, '-')}`}
+              class="px-4 py-2 rounded-full bg-dark-800 text-gray-300 hover:text-white text-sm font-medium whitespace-nowrap border border-dark-700 hover:border-brand-500/50 transition-colors"
+            >
+              {cat}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-12">
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sortedPosts.map((post) => (
+          <article class="card card-hover flex flex-col">
+            <a href={`/de/blog/${post.data.urlSlug}`} class="block">
+              <div class="aspect-video bg-dark-700 relative overflow-hidden">
+                <img
+                  src={getDefaultHeroImageForPost(post)}
+                  alt={post.data.title}
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+                {post.data.featured && (
+                  <div class="absolute top-4 left-4">
+                    <span class="px-3 py-1 rounded-full bg-brand-500 text-white text-xs font-semibold">{ui.featured}</span>
+                  </div>
+                )}
+              </div>
+            </a>
+            <div class="p-6 flex-1 flex flex-col">
+              <div class="flex items-center gap-2 mb-3 flex-wrap">
+                <span class="px-2 py-1 rounded bg-dark-700 text-brand-400 text-xs font-medium">{post.data.category}</span>
+                {post.data.rtp && <span class="px-2 py-1 rounded bg-gray-500/10 text-gray-400 text-xs font-medium">RTP {post.data.rtp}</span>}
+                {post.data.gameProvider && <span class="px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-xs font-medium">{post.data.gameProvider}</span>}
+              </div>
+              <a href={`/de/blog/${post.data.urlSlug}`} class="block mb-2">
+                <h2 class="text-xl font-bold text-white hover:text-brand-400 transition-colors line-clamp-2">{post.data.title}</h2>
+              </a>
+              <p class="text-gray-400 text-sm line-clamp-2 mb-4 flex-1">{post.data.description}</p>
+              <div class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-dark-700">
+                <span>{post.data.author}</span>
+                <span>{post.data.pubDate.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {sortedPosts.length === 0 && (
+        <div class="text-center py-20">
+          <div class="text-6xl mb-4">Docs</div>
+          <h3 class="text-xl font-bold text-white mb-2">Pas encore de guides</h3>
+          <p class="text-gray-400">Revenez bientot pour du nouveau contenu.</p>
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
+
+\n

@@ -1,0 +1,261 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import AffiliateCard from '../../../components/AffiliateCard.astro';
+import { UI_TEXT, CTA_TEXT, type Casino, type Locale } from '../../../config/affiliate';
+
+const locale: Locale = 'ru';
+const title = 'Калькулятор крипто-комиссий | Read Between Bets';
+const description = 'Сравните BTC, LTC, ERC20 и TRC20, чтобы снизить потери на комиссиях перед депозитом.';
+const ui = UI_TEXT[locale];
+const cta = CTA_TEXT[locale];
+const casinos: Casino[] = ['privateclub', 'barbossabet'];
+---
+
+<Layout title={title} description={description} locale={locale} alternates={{ en: '/tools/fee-impact/', fr: '/ru/tools/impact-ruais/' }}>
+  <section class="relative py-16 border-b border-dark-700">
+    <div class="section-padding max-w-5xl mx-auto">
+      <p class="eyebrow mb-4">Сумма депозита</p>
+      <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4">Калькулятор крипто-комиссий</h1>
+      <p class="text-lg text-gray-300 max-w-3xl">
+        Сравните реальную стоимость депозита в популярных крипто-сетях.
+      </p>
+    </div>
+  </section>
+
+  <section class="py-12">
+    <div class="section-padding max-w-5xl mx-auto space-y-6">
+      <article class="p-6 md:p-8 border border-dark-700 rounded-xl">
+        <form id="fee-form-ru" class="grid md:grid-cols-[2fr,1fr] gap-4 items-end">
+          <label class="block">
+            <span class="text-sm text-gray-300">Сумма депозита (USD)</span>
+            <input id="deposit-amount-ru" type="number" min="10" step="5" value="100" class="mt-1 w-full rounded-lg border border-dark-700 bg-dark-900 px-3 py-2 text-white" />
+          </label>
+          <button id="refresh-fees-ru" type="button" class="btn-primary">Обновить лайв-комиссии BTC</button>
+        </form>
+        <p id="last-updated-ru" class="text-xs text-gray-500 mt-3">Ориентировочные значения (до загрузки лайв-данных).</p>
+        <p class="text-xs text-gray-500 mt-1">
+          Источник лайв-комиссий BTC:
+          <a href="https://mempool.space/" target="_blank" rel="noopener noreferrer" class="text-brand-300 hover:text-brand-200 underline">API mempool.space</a>
+        </p>
+      </article>
+
+      <article class="p-6 md:p-8 border border-dark-700 rounded-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead>
+              <tr class="text-gray-400 border-b border-dark-700">
+                <th class="py-3 pr-3">Сеть</th>
+                <th class="py-3 pr-3">Комиссия (USD)</th>
+                <th class="py-3 pr-3">Вы вносите</th>
+                <th class="py-3 pr-3">Вы играете на</th>
+                <th class="py-3">Потеря %</th>
+              </tr>
+            </thead>
+            <tbody id="fee-table-body-ru">
+              <tr data-network="BTC" class="border-b border-dark-800">
+                <td class="py-3 pr-3">Bitcoin (BTC)</td>
+                <td class="py-3 pr-3">
+                  $ <input id="btc-fee-input-ru" type="number" value="6.00" min="0" step="0.1" aria-label="Комиссия Bitcoin в USD" class="fee-input-ru w-24 rounded border border-dark-700 bg-dark-900 px-2 py-1 text-white" />
+                  <div id="btc-details-ru" class="text-xs text-gray-500 mt-1">Расчетное значение</div>
+                </td>
+                <td class="deposit-amt-ru py-3 pr-3">$100</td>
+                <td class="play-amt-ru py-3 pr-3 text-white">--</td>
+                <td class="fee-percent-ru py-3">--</td>
+              </tr>
+              <tr data-network="LTC" class="border-b border-dark-800">
+                <td class="py-3 pr-3">Litecoin (LTC)</td>
+                <td class="py-3 pr-3">$ <input type="number" value="0.05" min="0" step="0.01" aria-label="Комиссия Litecoin в USD" class="fee-input-ru w-24 rounded border border-dark-700 bg-dark-900 px-2 py-1 text-white" /></td>
+                <td class="deposit-amt-ru py-3 pr-3">$100</td>
+                <td class="play-amt-ru py-3 pr-3 text-white">--</td>
+                <td class="fee-percent-ru py-3">--</td>
+              </tr>
+              <tr data-network="ERC20" class="border-b border-dark-800">
+                <td class="py-3 pr-3">Ethereum (ERC20)</td>
+                <td class="py-3 pr-3">$ <input type="number" value="4.50" min="0" step="0.1" aria-label="Комиссия Ethereum ERC20 в USD" class="fee-input-ru w-24 rounded border border-dark-700 bg-dark-900 px-2 py-1 text-white" /></td>
+                <td class="deposit-amt-ru py-3 pr-3">$100</td>
+                <td class="play-amt-ru py-3 pr-3 text-white">--</td>
+                <td class="fee-percent-ru py-3">--</td>
+              </tr>
+              <tr data-network="TRC20">
+                <td class="py-3 pr-3">Tron (TRC20)</td>
+                <td class="py-3 pr-3">$ <input type="number" value="1.00" min="0" step="0.1" aria-label="Комиссия Tron TRC20 в USD" class="fee-input-ru w-24 rounded border border-dark-700 bg-dark-900 px-2 py-1 text-white" /></td>
+                <td class="deposit-amt-ru py-3 pr-3">$100</td>
+                <td class="play-amt-ru py-3 pr-3 text-white">--</td>
+                <td class="fee-percent-ru py-3">--</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="mt-6 border-l-2 border-brand-400 pl-4">
+          <p class="text-sm text-brand-300 font-semibold mb-1">Рекомендация</p>
+          <p id="fee-recommendation-ru" class="text-sm text-gray-300">--</p>
+        </div>
+
+        <p class="text-xs text-gray-500 mt-4">
+          Только для информации. Реальные комиссии зависят от кошелька, биржи и сети.
+        </p>
+      </article>
+
+      <article class="p-6 md:p-8 border border-dark-700 rounded-xl bg-dark-800">
+        <h2 class="text-2xl font-bold text-white mb-2">{ui.whereToPlay}</h2>
+        <p class="text-gray-400 text-sm mb-2">{ui.availabilityNote}</p>
+        <p class="text-gray-500 text-xs mb-2">{ui.availabilityWarning}</p>
+        <p class="text-gray-500 text-xs mb-6">{cta.affiliateDisclosure}</p>
+
+        <div class="grid gap-4 md:grid-cols-2">
+          {casinos.map((casinoKey) => (
+            <AffiliateCard
+              casinoKey={casinoKey}
+              locale={locale}
+              href={`/ru/go/${casinoKey}`}
+              ctaLabel={cta.seeAvailability}
+            />
+          ))}
+        </div>
+      </article>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const BTC_CACHE_KEY_FR = 'rbb:btc-fee-cache:fr';
+  const BTC_CACHE_TTL_MS_FR = 5 * 60 * 1000;
+
+  const formatNumberRu = (value: number, digits = 0) =>
+    new Intl.NumberFormat('ru-RU', {
+      maximumRuactionDigits: digits,
+      minimumRuactionDigits: digits
+    }).format(value);
+
+  const updateCalculationsRu = () => {
+    const deposit = Math.max(1, Number.parseFloat((document.getElementById('deposit-amount-ru') as HTMLInputElement).value) || 0);
+    const rows = document.querySelectorAll('#fee-table-body-ru tr');
+
+    let best = { net: -Infinity, network: '', percent: 0 };
+
+    rows.forEach((row) => {
+      (row.querySelector('.deposit-amt-ru') as HTMLElement).textContent = `$${formatNumberRu(deposit)}`;
+
+      const feeInput = row.querySelector('.fee-input-ru') as HTMLInputElement;
+      const fee = Math.max(0, Number.parseFloat(feeInput.value) || 0);
+      const net = Math.max(0, deposit - fee);
+      const percent = deposit > 0 ? (fee / deposit) * 100 : 0;
+
+      (row.querySelector('.play-amt-ru') as HTMLElement).textContent = `$${formatNumberRu(net, 2)}`;
+
+      const pctCell = row.querySelector('.fee-percent-ru') as HTMLElement;
+      pctCell.textContent = `${formatNumberRu(percent, 2)}%`;
+      pctCell.classList.remove('text-red-400', 'text-green-400', 'text-gray-400');
+      if (percent > 10) pctCell.classList.add('text-red-400');
+      else if (percent < 2) pctCell.classList.add('text-green-400');
+      else pctCell.classList.add('text-gray-400');
+
+      if (net > best.net) {
+        best = { net, network: row.getAttribute('data-network') ?? '', percent };
+      }
+    });
+
+    const rec = document.getElementById('fee-recommendation-ru') as HTMLElement;
+    if (best.percent > 5) {
+      rec.textContent = `Комиссии высоки. Даже с ${best.network}, вы теряете ${formatNumberRu(best.percent, 1)}% при этой сумме.`;
+    } else {
+      rec.textContent = `Выберите ${best.network} чтобы сохранить больше. Вы сохраните $${formatNumberRu(best.net, 2)} из $${formatNumberRu(deposit)}.`;
+    }
+  };
+
+  const fetchJsonWithTimeoutRu = async (url: string, timeoutMs: number) => {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, { signal: controller.signal });
+      return response;
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  };
+
+  const readCachedBtcRu = () => {
+    try {
+      const raw = localStorage.getItem(BTC_CACHE_KEY_FR);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as { feeUsd: number; satByte: number; btcPrice: number; ts: number };
+      if (!Number.isFinite(parsed.feeUsd) || !Number.isFinite(parsed.ts)) return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  };
+
+  const writeCachedBtcRu = (feeUsd: number, satByte: number, btcPrice: number) => {
+    try {
+      localStorage.setItem(
+        BTC_CACHE_KEY_FR,
+        JSON.stringify({ feeUsd, satByte, btcPrice, ts: Date.now() }),
+      );
+    } catch {
+      // Ignore storage quota/privacy mode failures.
+    }
+  };
+
+  const fetchLiveBtcFeeRu = async () => {
+    const button = document.getElementById('refresh-fees-ru') as HTMLButtonElement;
+    const status = document.getElementById('last-updated-ru') as HTMLElement;
+    const btcInput = document.getElementById('btc-fee-input-ru') as HTMLInputElement;
+    const btcDetails = document.getElementById('btc-details-ru') as HTMLElement;
+
+    button.disabled = true;
+    button.textContent = 'Загрузка...';
+
+    try {
+      const [priceRes, feeRes] = await Promise.all([
+        fetchJsonWithTimeoutRu('https://mempool.space/api/v1/prices', 8000),
+        fetchJsonWithTimeoutRu('https://mempool.space/api/v1/fees/recommended', 8000)
+      ]);
+
+      if (!priceRes.ok || !feeRes.ok) {
+        throw new Error('Live fee fetch failed');
+      }
+
+      const priceData = await priceRes.json() as { USD?: number };
+      const feeData = await feeRes.json() as { halfHourFee?: number };
+
+      const btcPrice = Number(priceData.USD);
+      const satByte = Number(feeData.halfHourFee);
+      if (!Number.isFinite(btcPrice) || !Number.isFinite(satByte)) {
+        throw new Error('Invalid fee response');
+      }
+
+      const txSizeVbytes = 140;
+      const feeUsd = ((satByte * txSizeVbytes) / 100000000) * btcPrice;
+
+      btcInput.value = feeUsd.toFixed(2);
+      btcDetails.textContent = `${formatNumberRu(satByte, 0)} sat/vB, BTC ~$${formatNumberRu(btcPrice, 0)}`;
+      status.textContent = `Обновлено ${new Date().toLocaleTimeString('ru-RU')}`;
+      writeCachedBtcRu(feeUsd, satByte, btcPrice);
+    } catch {
+      const cached = readCachedBtcRu();
+      if (cached && Date.now() - cached.ts <= BTC_CACHE_TTL_MS_FR) {
+        btcInput.value = cached.feeUsd.toFixed(2);
+        btcDetails.textContent = `${formatNumberRu(cached.satByte, 0)} sat/vB, BTC ~$${formatNumberRu(cached.btcPrice, 0)} (cache)`;
+        status.textContent = 'Ошибка лайв-обновления. Используется кэш.';
+      } else {
+        status.textContent = 'Ошибка лайв-обновления. Используются ручные данные.';
+        btcDetails.textContent = 'Не удалось загрузить mempool.space';
+      }
+    } finally {
+      button.disabled = false;
+      button.textContent = 'Обновить лайв-комиссии BTC';
+      updateCalculationsRu();
+    }
+  };
+
+  document.querySelectorAll('.fee-input-ru').forEach((input) => {
+    input.addEventListener('input', updateCalculationsRu);
+  });
+  document.getElementById('deposit-amount-ru')?.addEventListener('input', updateCalculationsRu);
+  document.getElementById('refresh-fees-ru')?.addEventListener('click', fetchLiveBtcFeeRu);
+
+  updateCalculationsRu();
+  fetchLiveBtcFeeRu();
+</script>

@@ -23,8 +23,9 @@ const {
   jsonLd
 } = Astro.props;
 
-const pathLocale: Locale = Astro.url.pathname.startsWith('/fr') ? 'fr' : 'en';
+const pathLocale: Locale = Astro.url.pathname.startsWith('/fr') ? 'fr' : Astro.url.pathname.startsWith('/de') ? 'de' : Astro.url.pathname.startsWith('/ru') ? 'ru' : 'en';
 const locale: Locale = pathLocale;
+const getBasePath = (path: string) => locale === 'en' ? path : `/${locale}${path === '/' ? '' : path}`;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
@@ -52,6 +53,8 @@ const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
   <!-- Alternate language -->
   {alternates.en && <link rel="alternate" hreflang="en" href={new URL(alternates.en, Astro.site)} />}
   {alternates.fr && <link rel="alternate" hreflang="fr" href={new URL(alternates.fr, Astro.site)} />}
+  {alternates.de && <link rel="alternate" hreflang="de" href={new URL(alternates.de, Astro.site)} />}
+  {alternates.ru && <link rel="alternate" hreflang="ru" href={new URL(alternates.ru, Astro.site)} />}
   <link rel="alternate" hreflang="x-default" href={new URL(alternates.en ?? currentPath, Astro.site)} />
   
   <!-- Primary Meta Tags -->
@@ -103,7 +106,7 @@ const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
     <div class="section-padding max-w-7xl mx-auto">
       <div class="flex items-center justify-between h-24 lg:h-28">
         <!-- Logo -->
-        <a href={locale === 'en' ? '/' : '/fr/'} class="flex items-center group">
+        <a href={getBasePath('/')} class="flex items-center group">
           <img
             src="/img/brand/rbb_logo.webp"
             alt="Read Between Bets"
@@ -115,32 +118,38 @@ const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
         
         <!-- Desktop Navigation -->
         <nav class="hidden lg:flex items-center gap-6">
-          <a href={locale === 'en' ? '/' : '/fr/'} class="text-gray-300 hover:text-white font-medium transition-colors">{t.home}</a>
-          <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="text-gray-300 hover:text-white font-medium transition-colors">{t.allGuides}</a>
-          <a href={locale === 'en' ? '/blog/insights' : '/fr/blog/insights'} class="text-gray-300 hover:text-white font-medium transition-colors">{t.insights}</a>
-          <a href={locale === 'en' ? '/tools' : '/fr/tools'} class="text-gray-300 hover:text-white font-medium transition-colors">{t.tools}</a>
+          <a href={getBasePath('/')} class="text-gray-300 hover:text-white font-medium transition-colors">{t.home}</a>
+          <a href={getBasePath('/blog')} class="text-gray-300 hover:text-white font-medium transition-colors">{t.allGuides}</a>
+          <a href={getBasePath('/blog/insights')} class="text-gray-300 hover:text-white font-medium transition-colors">{t.insights}</a>
+          <a href={getBasePath('/tools')} class="text-gray-300 hover:text-white font-medium transition-colors">{t.tools}</a>
         </nav>
         
         <!-- Right Side: Language Switcher -->
         <div class="flex items-center gap-2">
           <!-- Language Switcher -->
           <div class="relative group">
-            <button type="button" class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-800 text-gray-300 hover:text-white text-sm font-medium transition-colors border border-dark-700" aria-haspopup="true" aria-expanded="false" aria-label={locale === 'en' ? 'Switch language' : 'Changer de langue'}>
-              <span class="text-lg">{locale === 'en' ? 'EN' : 'FR'}</span>
+            <button type="button" class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-dark-800 text-gray-300 hover:text-white text-sm font-medium transition-colors border border-dark-700" aria-haspopup="true" aria-expanded="false" aria-label={locale === 'en' ? 'Switch language' : locale === 'fr' ? 'Changer de langue' : locale === 'de' ? 'Sprache wechseln' : 'Сменить язык'}>
+              <span class="text-lg uppercase">{locale}</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
             <div class="absolute top-full right-0 mt-2 w-32 bg-dark-800 rounded-xl border border-dark-700 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-              {locale !== 'en' && (
+{locale !== 'en' && (
                 <a href={alternates.en ?? '/'} class="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-dark-700 first:rounded-t-xl transition-colors">English</a>
               )}
               {locale !== 'fr' && (
-                <a href={alternates.fr ?? '/fr/'} class="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-dark-700 last:rounded-b-xl transition-colors">Francais</a>
+                <a href={alternates.fr ?? '/fr/'} class="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-dark-700 transition-colors">Français</a>
+              )}
+              {locale !== 'de' && (
+                <a href={alternates.de ?? '/de/'} class="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-dark-700 transition-colors">Deutsch</a>
+              )}
+              {locale !== 'ru' && (
+                <a href={alternates.ru ?? '/ru/'} class="flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white hover:bg-dark-700 last:rounded-b-xl transition-colors">Русский</a>
               )}
             </div>
           </div>
           
           <!-- Mobile Menu Button -->
-          <button id="mobile-menu-btn" type="button" class="lg:hidden p-2 text-gray-300 hover:text-white" aria-label={locale === 'en' ? 'Toggle navigation menu' : 'Basculer le menu de navigation'} aria-controls="mobile-menu" aria-expanded="false">
+          <button id="mobile-menu-btn" type="button" class="lg:hidden p-2 text-gray-300 hover:text-white" aria-label={locale === 'en' ? 'Toggle navigation menu' : locale === 'fr' ? 'Basculer le menu de navigation' : locale === 'de' ? 'Navigationsmenü umschalten' : 'Переключить меню навигации'} aria-controls="mobile-menu" aria-expanded="false">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
           </button>
         </div>
@@ -150,19 +159,25 @@ const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden lg:hidden bg-dark-800 border-t border-dark-700">
       <div class="section-padding py-4 space-y-2">
-        <a href={locale === 'en' ? '/' : '/fr/'} class="block py-2 text-gray-300 hover:text-white font-medium">{t.home}</a>
-        <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="block py-2 text-gray-300 hover:text-white font-medium">{t.allGuides}</a>
-        <a href={locale === 'en' ? '/blog/insights' : '/fr/blog/insights'} class="block py-2 text-gray-300 hover:text-white font-medium">{t.insights}</a>
-        <a href={locale === 'en' ? '/tools' : '/fr/tools'} class="block py-2 text-gray-300 hover:text-white font-medium">{t.tools}</a>
+        <a href={getBasePath('/')} class="block py-2 text-gray-300 hover:text-white font-medium">{t.home}</a>
+        <a href={getBasePath('/blog')} class="block py-2 text-gray-300 hover:text-white font-medium">{t.allGuides}</a>
+        <a href={getBasePath('/blog/insights')} class="block py-2 text-gray-300 hover:text-white font-medium">{t.insights}</a>
+        <a href={getBasePath('/tools')} class="block py-2 text-gray-300 hover:text-white font-medium">{t.tools}</a>
         
         <!-- Language Switch Mobile -->
         <div class="border-t border-dark-700 pt-2 mt-2">
-          <p class="text-gray-500 text-sm mb-2">{locale === 'en' ? 'Language' : 'Langue'}</p>
-          {locale !== 'en' && (
+          <p class="text-gray-500 text-sm mb-2">{locale === 'en' ? 'Language' : locale === 'fr' ? 'Langue' : locale === 'de' ? 'Sprache' : 'Язык'}</p>
+{locale !== 'en' && (
             <a href={alternates.en ?? '/'} class="flex items-center gap-2 py-2 text-gray-300 hover:text-white">English</a>
           )}
           {locale !== 'fr' && (
-            <a href={alternates.fr ?? '/fr/'} class="flex items-center gap-2 py-2 text-gray-300 hover:text-white">Francais</a>
+            <a href={alternates.fr ?? '/fr/'} class="flex items-center gap-2 py-2 text-gray-300 hover:text-white">Français</a>
+          )}
+          {locale !== 'de' && (
+            <a href={alternates.de ?? '/de/'} class="flex items-center gap-2 py-2 text-gray-300 hover:text-white">Deutsch</a>
+          )}
+          {locale !== 'ru' && (
+            <a href={alternates.ru ?? '/ru/'} class="flex items-center gap-2 py-2 text-gray-300 hover:text-white">Русский</a>
           )}
         </div>
       </div>
@@ -189,7 +204,7 @@ const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <!-- Brand -->
         <div class="lg:col-span-2">
-          <a href={locale === 'en' ? '/' : '/fr/'} class="flex items-center gap-2 mb-4">
+          <a href={getBasePath('/')} class="flex items-center gap-2 mb-4">
             <div class="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden border border-dark-700 bg-dark-800">
               <img src="/img/brand/spy-main.webp" alt="Spy Character" class="w-[120%] h-auto object-contain mt-1" loading="lazy" />
             </div>
@@ -206,11 +221,11 @@ const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
         <div>
           <h3 class="text-white font-semibold mb-4">{ui.quickLinks}</h3>
           <ul class="space-y-2">
-            <li><a href={locale === 'en' ? '/' : '/fr/'} class="text-gray-400 hover:text-brand-400 transition-colors">{t.home}</a></li>
-            <li><a href={locale === 'en' ? '/blog' : '/fr/blog'} class="text-gray-400 hover:text-brand-400 transition-colors">{t.allGuides}</a></li>
-            <li><a href={locale === 'en' ? '/tools' : '/fr/tools'} class="text-gray-400 hover:text-brand-400 transition-colors">{t.tools}</a></li>
-            <li><a href={locale === 'en' ? '/about' : '/fr/about'} class="text-gray-400 hover:text-brand-400 transition-colors">{locale === 'en' ? 'About' : 'A propos'}</a></li>
-            <li><a href="https://docs.google.com/forms/d/1oqG5glerMjURRtkt9uc_EShbHilrOcEXMaA5_vcqz_U/viewform" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-brand-400 transition-colors">{locale === 'en' ? 'Contact' : 'Contact'}</a></li>
+            <li><a href={getBasePath('/')} class="text-gray-400 hover:text-brand-400 transition-colors">{t.home}</a></li>
+            <li><a href={getBasePath('/blog')} class="text-gray-400 hover:text-brand-400 transition-colors">{t.allGuides}</a></li>
+            <li><a href={getBasePath('/tools')} class="text-gray-400 hover:text-brand-400 transition-colors">{t.tools}</a></li>
+            <li><a href={getBasePath('/about')} class="text-gray-400 hover:text-brand-400 transition-colors">{locale === 'en' ? 'About' : locale === 'fr' ? 'A propos' : locale === 'de' ? 'Über uns' : 'О нас'}</a></li>
+            <li><a href="https://docs.google.com/forms/d/1oqG5glerMjURRtkt9uc_EShbHilrOcEXMaA5_vcqz_U/viewform" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-brand-400 transition-colors">{locale === 'en' ? 'Contact' : locale === 'fr' ? 'Contact' : locale === 'de' ? 'Kontakt' : 'Контакты'}</a></li>
           </ul>
         </div>
 
@@ -218,9 +233,9 @@ const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
         <div>
           <h3 class="text-white font-semibold mb-4">{ui.legal}</h3>
           <ul class="space-y-2">
-            <li><a href={locale === 'en' ? '/privacy' : '/fr/privacy'} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.privacyPolicy}</a></li>
-            <li><a href={locale === 'en' ? '/terms' : '/fr/terms'} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.termsOfService}</a></li>
-            <li><a href={locale === 'en' ? '/responsible-gambling' : '/fr/responsible-gambling'} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.responsibleGambling}</a></li>
+            <li><a href={getBasePath('/privacy')} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.privacyPolicy}</a></li>
+            <li><a href={getBasePath('/terms')} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.termsOfService}</a></li>
+            <li><a href={getBasePath('/responsible-gambling')} class="text-gray-400 hover:text-brand-400 transition-colors">{ui.responsibleGambling}</a></li>
           </ul>
         </div>
       </div>

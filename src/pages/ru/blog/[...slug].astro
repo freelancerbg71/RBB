@@ -1,0 +1,237 @@
+﻿---
+import Layout from '../../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { UI_TEXT, CTA_TEXT, type Locale, type Casino } from '../../../config/affiliate';
+import { getDefaultHeroImageForPost } from '../../../utils/blog-hero';
+import AffiliateCard from '../../../components/AffiliateCard.astro';
+import ShareButtons from '../../../components/ShareButtons.astro';
+import { toKnownCategorySlug } from '../../../utils/category';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => data.locale === 'ru');
+  return posts.map((post) => ({
+    params: { slug: post.data.urlSlug },
+    props: { post },
+  }));
+}
+
+const locale: Locale = 'fr';
+const { post } = Astro.props as { post: any };
+const { Content } = await post.render();
+
+const allPosts = await getCollection('blog', ({ data }) => data.locale === 'ru');
+const relatedPosts = allPosts.filter((p) => p.data.category === post.data.category && p.data.urlSlug !== post.data.urlSlug).slice(0, 3);
+
+const ui = UI_TEXT[locale];
+const cta = CTA_TEXT[locale];
+const casinos: Casino[] = ['privateclub', 'barbossabet'];
+
+const hasEnTranslation =
+  (await getCollection('blog', ({ data }) => (data.locale ?? 'en') === 'en' && data.urlSlug === post.data.urlSlug)).length > 0;
+const alternates = {
+  fr: `/ru/blog/${post.data.urlSlug}/`,
+  ...(hasEnTranslation ? { en: `/blog/${post.data.urlSlug}/` } : {}),
+};
+
+const t = {
+  breadcrumbsHome: 'Accueil',
+  breadcrumbsGuides: 'Guides',
+  tags: 'Tags',
+  relatedGuides: 'Guides connexes',
+  youMightLike: 'Vous aimerez aussi',
+  educationalPurpose: 'Ce guide explique comment fonctionne le jeu et ou il peut etre joue, selon les lois locales.',
+  riskWarning: 'Avertissement',
+  riskText: "Les jeux d'argent impliquent des risques. Ne jouez qu'avec de l'argent que vous pouvez vous permettre de perdre.",
+};
+
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const articleImage = new URL(getDefaultHeroImageForPost(post), Astro.site).toString();
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.pubDate.toISOString(),
+  dateModified: (post.data.updatedDate ?? post.data.pubDate).toISOString(),
+  inLanguage: locale,
+  author: {
+    '@type': 'Organization',
+    name: post.data.author,
+  },
+  publisher: {
+    '@type': 'Organization',
+    name: 'Read Between Bets',
+  },
+  image: articleImage,
+  mainEntityOfPage: canonical,
+};
+const categorySlug = toKnownCategorySlug(post.data.category);
+const sectionHref =
+  post.data.postType === 'news' || categorySlug === 'news' || categorySlug.length === 0
+    ? '/ru/blog/news'
+    : `/ru/category/${categorySlug}`;
+---
+
+<Layout title={`${post.data.title} | Read Between Bets`} description={post.data.description} locale={locale} alternates={alternates} jsonLd={jsonLd}>
+  <section class="relative">
+    <div class="aspect-[21/9] md:aspect-[3/1] w-full overflow-hidden">
+      <img
+        src={getDefaultHeroImageForPost(post)}
+        alt={post.data.title}
+        class="w-full h-full object-cover"
+        loading="eager"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-dark-900 via-dark-900/50 to-transparent"></div>
+    </div>
+
+    <div class="section-padding max-w-7xl mx-auto">
+      <div class="relative -mt-20 md:-mt-32 mb-8">
+        <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6 md:p-8 shadow-xl">
+          <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <a href="/ru/" class="hover:text-brand-400 transition-colors">{t.breadcrumbsHome}</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <a href="/ru/blog" class="hover:text-brand-400 transition-colors">{t.breadcrumbsGuides}</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            <span class="text-gray-400 truncate">{post.data.title}</span>
+          </nav>
+
+          <div class="flex items-center gap-2 mb-4 flex-wrap">
+            <a href={sectionHref} class="px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-sm font-medium hover:bg-brand-500/20 transition-colors">
+              {post.data.category}
+            </a>
+            {post.data.rtp && (
+              <span class="px-3 py-1 rounded-full bg-gray-500/10 text-gray-400 text-sm font-medium">RTP {post.data.rtp}</span>
+            )}
+            {post.data.gameProvider && (
+              <span class="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 text-sm font-medium">{post.data.gameProvider}</span>
+            )}
+          </div>
+
+          <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">{post.data.title}</h1>
+          <p class="text-lg md:text-xl text-gray-400 mb-6">{post.data.description}</p>
+
+          <div class="flex items-start gap-3 p-4 bg-dark-900 rounded-xl border border-dark-700 mb-4">
+            <svg class="w-5 h-5 text-brand-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <p class="text-gray-400 text-sm">{t.educationalPurpose}</p>
+          </div>
+
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border border-dark-700 bg-dark-800 shrink-0 shadow-lg">
+                <img src="/img/brand/spy-main.webp" alt={post.data.author} class="w-[120%] h-auto object-contain mt-2" loading="lazy" />
+              </div>
+              <div>
+                <p class="text-white font-medium">{post.data.author}</p>
+                <p class="text-gray-500 text-sm">
+                  {post.data.pubDate.toLocaleDateString('fr-FR', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </p>
+              </div>
+            </div>
+            <ShareButtons locale={locale} title={post.data.title} url={canonical} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-padding max-w-7xl mx-auto pb-16">
+    <div class="grid lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2">
+        <article class="prose prose-invert prose-lg max-w-none">
+          <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6 md:p-8">
+            <Content />
+          </div>
+        </article>
+
+        {relatedPosts.length > 0 && (
+          <section class="mt-8 rounded-2xl border border-dark-700 bg-dark-800 p-6">
+            <h2 class="text-xl font-bold text-white mb-4">{t.relatedGuides}</h2>
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {relatedPosts.map((related: any) => (
+                <a
+                  href={`/ru/blog/${related.data.urlSlug}`}
+                  class="rounded-xl border border-dark-700 bg-dark-900 p-4 hover:border-brand-500/50 transition-colors"
+                >
+                  <p class="text-xs text-brand-300 mb-2">{related.data.category}</p>
+                  <h3 class="text-sm font-semibold text-white line-clamp-3">{related.data.title}</h3>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <div class="mt-8 p-6 bg-red-900/20 rounded-2xl border border-red-500/30">
+          <div class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-red-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <div>
+              <h3 class="text-white font-semibold mb-1">{t.riskWarning}</h3>
+              <p class="text-gray-400 text-sm">{t.riskText}</p>
+            </div>
+          </div>
+        </div>
+        {post.data.tags.length > 0 && (
+          <div class="mt-8">
+            <h3 class="text-white font-semibold mb-3">{t.tags}</h3>
+            <div class="flex flex-wrap gap-2">
+              {post.data.tags.map((tag: string) => (
+                <span class="px-3 py-1 rounded-full bg-dark-800 text-gray-400 text-sm border border-dark-700">{tag}</span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <aside class="space-y-6">
+        {post.data.postType !== 'news' && (
+          <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6 lg:sticky lg:top-24">
+              <h3 class="text-white font-bold mb-2">{ui.whereToPlay}</h3>
+              <p class="text-gray-400 text-sm mb-4">{ui.availabilityNote}</p>
+              <p class="text-gray-500 text-xs mb-4">{ui.availabilityWarning}</p>
+
+
+              <div class="space-y-4">
+                {casinos.map((casinoKey) => {
+                  // Route through our /go pages to avoid dead-ends and keep outbound links out of index.
+                  const link = `/ru/go/${casinoKey}`;
+                  return (
+                    <AffiliateCard
+                      casinoKey={casinoKey}
+                      locale={locale}
+                      href={link}
+                      ctaLabel={cta.viewGuide}
+                    />
+                  );
+                })}
+              </div>
+          </div>
+        )}
+
+        {relatedPosts.length > 0 && (
+          <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6">
+            <h3 class="text-white font-bold mb-4">{t.relatedGuides}</h3>
+            <div class="space-y-4">
+              {relatedPosts.map((related: any) => (
+                <a href={`/ru/blog/${related.data.urlSlug}`} class="flex gap-4 group">
+                  <div class="w-20 h-20 rounded-lg bg-dark-700 flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img
+                      src={getDefaultHeroImageForPost(related)}
+                      alt={related.data.title}
+                      class="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div>
+                    <h4 class="text-white font-medium text-sm group-hover:text-brand-400 transition-colors line-clamp-2">{related.data.title}</h4>
+                    <span class="text-gray-500 text-xs">{related.data.category}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </aside>
+    </div>
+  </section>
+</Layout>
+\n
+

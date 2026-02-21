@@ -10,7 +10,7 @@ export default defineConfig({
   site: 'https://readbetweenbets.com',
   integrations: [react(), sitemap({
     // Language-only hreflang. We are not targeting jurisdictions.
-    i18n: { defaultLocale: 'en', locales: { en: 'en', fr: 'fr' } },
+    i18n: { defaultLocale: 'en', locales: { en: 'en', fr: 'fr', de: 'de', ru: 'ru' } },
     // Astro sitemap `page` values may be emitted with or without a leading slash.
     // Normalize so exclusions are reliable.
     filter: (page) => {

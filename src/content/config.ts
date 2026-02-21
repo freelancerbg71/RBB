@@ -30,7 +30,7 @@ const blog = defineCollection({
     affiliateLink: z.string().optional(),
     gameProvider: z.string().optional(),
     rtp: z.string().optional(),
-    locale: z.enum(['en', 'fr']).default('en'),
+    locale: z.enum(['en', 'fr', 'de', 'ru']).default('en'),
   }),
 });
 

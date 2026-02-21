@@ -21,9 +21,9 @@ import StepNode from '../../components/mdx/StepNode.astro';
 
 If you play Crash, Dice, or Mines on any crypto-focused casino, you will see a little shield icon in the corner of the screen labeled **"Provably Fair"**. 
 
-Casinos use this phrase constantly in their marketing. They want you to believe that because the game is Provably Fair, the casino is fundamentally safer, more trustworthy, and more profitable than a traditional online casino. 
+Casinos use this phrase constantly in their marketing. These systems highlight cryptographic transparency, positioning Provably Fair games as fundamentally trustless. 
 
-This is half true. Provably Fair is a brilliant piece of cryptographic transparency. It completely stops the casino from "rigging" the RNG (Random Number Generator) against you. But it does absolutely nothing to protect you from the true structural risks of gambling. Here is how the system actually works.
+This is half true. Provably Fair is a brilliant piece of cryptographic transparency. It completely stops the casino from "rigging" the RNG (Random Number Generator) against you. However, it focuses solely on the randomization of the RNG, not the overall structural risks or terms of service. Here is how the system actually works.
 
 ## The Problem With Traditional Casinos
 
@@ -40,7 +40,7 @@ Before the round starts, the casino's server generates a random string of number
 </StepNode>
 
 <StepNode step="2" title="The Client Seed (Your Half)">
-Your browser generates its own random string, called the **Client Seed**. *You* have total control over this. You can literally delete the random string and type "LUCKYDOG99" if you want to. Because you control half of the mathematical equation, the casino cannot possibly predict the final outcome to rig it against you.
+Your browser generates its own random string, called the **Client Seed**. *You* have total control over this. You can literally delete the random string and type "LUCKYDOG99" if you want to. Because you control half of the mathematical equation, the system ensures that the outcome remains mathematically random.
 </StepNode>
 
 <StepNode step="3" title="The Nonce and The Verification">
@@ -49,12 +49,12 @@ When you hit 'Bet', the game takes the Casino's Server Seed, your Client Seed, a
 
 Because the casino committed their Server Seed up front via the Hash, you can use a third-party calculator after the round ends to input the raw data. The math will verify with 100% certainty that the casino did not alter their numbers after you chose your bet. 
 
-<MythBuster myth="Because the game is Provably Fair and I can verify every hand, the casino cannot possibly steal my money." reality="THE LOGIC CHECK">
-Provably Fair only proves that the *math of the specific spin* was random. It does absolutely nothing to protect you when you try to withdraw your money. The casino cannot rig the dice, but they can still lock your account, demand infinite KYC documents, or simply refuse to process your Bitcoin withdrawal. A fair shuffle doesn't matter if the dealer refuses to let you leave the building with your own chips.
+<MythBuster myth="Because the game is Provably Fair and I verify every hand, the outcome is fully mathematically verifiable." reality="THE LOGIC CHECK">
+Provably Fair only proves that the *math of the specific spin* was random. It does absolutely nothing to protect you when you try to withdraw your money. While the dice roll is mathematically fair, account management, KYC processes, and withdrawal policies remain entirely at the operator's discretion. A mathematically verified game does not supersede an operator's terms and conditions.
 </MythBuster>
 
 <ProTip title="ROTATE YOUR SEEDS" icon="🔄">
 If you are playing a Provably Fair game heavily, get into the habit of clicking the "Provably Fair Settings" button and rotating your Client Seed every few dozen rounds. This forces the casino to reveal their old Server Seed, allowing you to mathematically verify that your previous session was completely fair. It takes five seconds and keeps the operator honest.
 </ProTip>
 
-Provably Fair is a fantastic piece of consumer protection technology. But remember: The math is perfectly random, but the underlying game still has a House Edge. You are playing a mathematically fair game that is explicitly designed to slowly drain your bankroll.
+Provably Fair is a fantastic piece of consumer protection technology. But remember: The math is perfectly random, but the underlying game still has a House Edge. You are playing a mathematically fair game that is explicitly designed to favor the house over time.
