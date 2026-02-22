@@ -4,14 +4,12 @@ import Layout from '../../../layouts/Layout.astro';
 const to = '/de/blog/baccarat-risk-playbook/';
 ---
 
-<Layout title="Page deplacee" description="Cette page a ete deplacee." locale="fr" noindex={true} alternates={{ fr: to }}>
+<Layout title="Seite verschoben" description="Diese Seite wurde verschoben." locale="de" noindex={true} alternates={{ de: to }}>
   <section class="section-padding max-w-3xl mx-auto py-16">
     <div class="bg-dark-800 rounded-2xl border border-dark-700 p-8">
-      <h1 class="text-2xl font-bold text-white mb-3">Cette page a ete deplacee</h1>
-      <p class="text-gray-300 mb-6">Redirection vers le guide mis a jour.</p>
-      <a href={to} class="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-semibold transition-colors">
-        Continuer
-      </a>
+      <h1 class="text-2xl font-bold text-white mb-3">Diese Seite wurde verschoben</h1>
+      <p class="text-gray-300 mb-6">Weiterleitung zum aktualisierten Leitfaden.</p>
+      <a href={to} class="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-semibold transition-colors">Weiter</a>
     </div>
   </section>
 </Layout>
@@ -19,3 +17,4 @@ const to = '/de/blog/baccarat-risk-playbook/';
 <script is:inline define:vars={{ to }}>
   window.location.replace(to);
 </script>
+

@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 import { AFFILIATE_LINKS, CASINO_INFO, type Casino, type Locale } from '../../../config/affiliate';
 
@@ -12,8 +12,8 @@ const casino = Astro.params.casino as Casino;
 const info = CASINO_INFO[casino];
 const outbound = AFFILIATE_LINKS[casino][locale];
 
-const title = `Continuer vers ${info.name} | Read Between Bets`;
-const description = `Avis de lien sortant pour ${info.name}. Site informatif; la disponibilite varie selon la localisation.`;
+const title = `Weiter zu ${info.name} | Read Between Bets`;
+const description = `Hinweis zu externem Link fuer ${info.name}. Verfuegbarkeit variiert nach Region.`;
 
 const redirectSeconds = 2;
 const outboundEvent = {
@@ -22,23 +22,22 @@ const outboundEvent = {
 };
 ---
 
-<Layout title={title} description={description} locale={locale} alternates={{ en: `/go/${casino}/`, fr: `/de/go/${casino}/` }} noindex={true}>
+<Layout title={title} description={description} locale={locale} alternates={{ en: `/go/${casino}/`, de: `/de/go/${casino}/` }} noindex={true}>
   <section class="section-padding max-w-3xl mx-auto py-16">
     <div class="bg-dark-800 rounded-2xl border border-dark-700 p-8">
-      <h1 class="text-2xl sm:text-3xl font-bold text-white mb-3">Vous quittez Read Between Bets</h1>
+      <h1 class="text-2xl sm:text-3xl font-bold text-white mb-3">Sie verlassen Read Between Bets</h1>
       <p class="text-gray-300 mb-6">
-        Vous allez visiter <span class="text-white font-semibold">{info.name}</span>.
-        Ce lien peut etre indisponible dans certaines zones (y compris US/UK). La disponibilite depend des lois locales.
+        Sie wechseln zu <span class="text-white font-semibold">{info.name}</span>. Verfuegbarkeit ist standortabhaengig und kann in einigen Regionen eingeschraenkt sein.
       </p>
 
       <div class="bg-dark-900 rounded-xl border border-dark-700 p-4 mb-6">
         <p class="text-gray-400 text-sm">
-          Certains liens sur ce site sont des liens d'affiliation. Si vous vous inscrivez et effectuez un depot apres le clic, nous pouvons recevoir une commission.
+          Einige Links auf dieser Website sind Affiliate-Links. Bei Registrierung und Einzahlung koennen wir eine Provision erhalten.
         </p>
       </div>
 
       <p class="text-gray-400 text-sm mb-6">
-        Vous allez etre redirige automatiquement dans <span id="countdown" class="text-white font-semibold">{redirectSeconds}</span> secondes.
+        Automatische Weiterleitung in <span id="countdown" class="text-white font-semibold">{redirectSeconds}</span> Sekunden.
       </p>
 
       <div class="flex flex-col sm:flex-row gap-3">
@@ -48,22 +47,16 @@ const outboundEvent = {
           rel="sponsored nofollow"
           class="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-white font-semibold transition-colors"
         >
-          Continuer
+          Weiter
         </a>
         <a
           id="cancel-outbound"
           href="/de/"
           class="inline-flex items-center justify-center px-5 py-3 rounded-lg bg-dark-700 hover:bg-dark-600 text-gray-200 font-semibold transition-colors"
         >
-          Retour
+          Zurueck
         </a>
       </div>
-
-      <noscript>
-        <p class="text-gray-400 text-sm mt-6">
-          JavaScript est desactive. Utilisez le bouton Continuer ci-dessus.
-        </p>
-      </noscript>
     </div>
   </section>
 </Layout>
@@ -88,12 +81,10 @@ const outboundEvent = {
     if (!Number.isFinite(seconds) || seconds <= 0) return;
 
     let remaining = seconds;
-
     const render = () => {
       if (el) el.textContent = String(Math.max(0, remaining));
     };
 
-    // Show initial value, then count down once per second.
     render();
 
     const timer = window.setInterval(() => {
@@ -107,4 +98,3 @@ const outboundEvent = {
     }, 1000);
   })();
 </script>
-

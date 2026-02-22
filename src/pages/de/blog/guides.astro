@@ -1,28 +1,32 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 import BlogTabs from '../../../components/BlogTabs.astro';
 import { getCollection } from 'astro:content';
 import { UI_TEXT, type Locale } from '../../../config/affiliate';
 import { getDefaultHeroImageForPost } from '../../../utils/blog-hero';
+import { isTranslationApproved } from '../../../utils/translation-review';
 
-const locale: Locale = 'fr';
+const locale: Locale = 'de';
 
-const allPosts = await getCollection('blog', ({ data }) => data.locale === locale && data.postType === 'guide');
+const allPosts = await getCollection(
+  'blog',
+  ({ data }) => data.locale === locale && data.postType === 'guide' && isTranslationApproved(data),
+);
 const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 const categories = [...new Set(allPosts.map((post) => post.data.category))];
 
 const ui = UI_TEXT[locale];
 
 const title = 'Guides | Read Between Bets';
-const description = 'Guides educatifs: mecanismes, bases du RTP, volatilite, et points a verifier avant de jouer.';
+const description = 'Bildungsleitfaeden zu Spielmechanik, RTP, Volatilitaet und Risikokontext.';
 ---
 
-<Layout title={title} description={description} locale={locale} alternates={{ en: '/blog/guides/', fr: '/de/blog/guides/' }}>
+<Layout title={title} description={description} locale={locale} alternates={{ en: '/blog/guides/', de: '/de/blog/guides/' }}>
   <section class="relative py-16 bg-dark-800/50 border-b border-dark-700">
     <div class="section-padding max-w-7xl mx-auto">
       <div>
         <h1 class="text-4xl sm:text-5xl font-bold text-white mb-4">Guides</h1>
-        <p class="text-gray-400 text-lg max-w-2xl">Guides educatifs ({sortedPosts.length}).</p>
+        <p class="text-gray-400 text-lg max-w-2xl">Bildungsleitfaeden ({sortedPosts.length}).</p>
       </div>
     </div>
   </section>
@@ -80,7 +84,7 @@ const description = 'Guides educatifs: mecanismes, bases du RTP, volatilite, et 
               <p class="text-gray-400 text-sm line-clamp-2 mb-4 flex-1">{post.data.description}</p>
               <div class="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-dark-700">
                 <span>{post.data.author}</span>
-                <span>{post.data.pubDate.toLocaleDateString('fr-FR', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                <span>{post.data.pubDate.toLocaleDateString('de-DE', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
               </div>
             </div>
           </article>
@@ -90,8 +94,8 @@ const description = 'Guides educatifs: mecanismes, bases du RTP, volatilite, et 
       {sortedPosts.length === 0 && (
         <div class="text-center py-20">
           <div class="text-6xl mb-4">Docs</div>
-          <h3 class="text-xl font-bold text-white mb-2">Pas encore de guides</h3>
-          <p class="text-gray-400">Revenez bientot pour du nouveau contenu.</p>
+          <h3 class="text-xl font-bold text-white mb-2">Noch keine Leitfaeden</h3>
+          <p class="text-gray-400">Schauen Sie bald wieder vorbei.</p>
         </div>
       )}
     </div>
@@ -109,3 +113,5 @@ const description = 'Guides educatifs: mecanismes, bases du RTP, volatilite, et 
 </style>
 
 \n
+
+

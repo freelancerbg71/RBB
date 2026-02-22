@@ -11,7 +11,7 @@ const cta = CTA_TEXT[locale];
 const casinos: Casino[] = ['privateclub', 'barbossabet'];
 ---
 
-<Layout title={title} description={description} locale={locale} alternates={{ en: '/tools/fee-impact/', fr: '/ru/tools/impact-ruais/' }}>
+<Layout title={title} description={description} locale={locale} alternates={{ en: '/tools/fee-impact/', ru: '/ru/tools/impact-frais/' }}>
   <section class="relative py-16 border-b border-dark-700">
     <div class="section-padding max-w-5xl mx-auto">
       <p class="eyebrow mb-4">Сумма депозита</p>
@@ -119,13 +119,13 @@ const casinos: Casino[] = ['privateclub', 'barbossabet'];
 </Layout>
 
 <script>
-  const BTC_CACHE_KEY_FR = 'rbb:btc-fee-cache:fr';
-  const BTC_CACHE_TTL_MS_FR = 5 * 60 * 1000;
+  const BTC_CACHE_KEY_RU = 'rbb:btc-fee-cache:ru';
+  const BTC_CACHE_TTL_MS_RU = 5 * 60 * 1000;
 
   const formatNumberRu = (value: number, digits = 0) =>
     new Intl.NumberFormat('ru-RU', {
-      maximumRuactionDigits: digits,
-      minimumRuactionDigits: digits
+      maximumFractionDigits: digits,
+      minimumFractionDigits: digits
     }).format(value);
 
   const updateCalculationsRu = () => {
@@ -177,7 +177,7 @@ const casinos: Casino[] = ['privateclub', 'barbossabet'];
 
   const readCachedBtcRu = () => {
     try {
-      const raw = localStorage.getItem(BTC_CACHE_KEY_FR);
+      const raw = localStorage.getItem(BTC_CACHE_KEY_RU);
       if (!raw) return null;
       const parsed = JSON.parse(raw) as { feeUsd: number; satByte: number; btcPrice: number; ts: number };
       if (!Number.isFinite(parsed.feeUsd) || !Number.isFinite(parsed.ts)) return null;
@@ -190,7 +190,7 @@ const casinos: Casino[] = ['privateclub', 'barbossabet'];
   const writeCachedBtcRu = (feeUsd: number, satByte: number, btcPrice: number) => {
     try {
       localStorage.setItem(
-        BTC_CACHE_KEY_FR,
+        BTC_CACHE_KEY_RU,
         JSON.stringify({ feeUsd, satByte, btcPrice, ts: Date.now() }),
       );
     } catch {
@@ -235,7 +235,7 @@ const casinos: Casino[] = ['privateclub', 'barbossabet'];
       writeCachedBtcRu(feeUsd, satByte, btcPrice);
     } catch {
       const cached = readCachedBtcRu();
-      if (cached && Date.now() - cached.ts <= BTC_CACHE_TTL_MS_FR) {
+      if (cached && Date.now() - cached.ts <= BTC_CACHE_TTL_MS_RU) {
         btcInput.value = cached.feeUsd.toFixed(2);
         btcDetails.textContent = `${formatNumberRu(cached.satByte, 0)} sat/vB, BTC ~$${formatNumberRu(cached.btcPrice, 0)} (cache)`;
         status.textContent = 'Ошибка лайв-обновления. Используется кэш.';
@@ -259,3 +259,4 @@ const casinos: Casino[] = ['privateclub', 'barbossabet'];
   updateCalculationsRu();
   fetchLiveBtcFeeRu();
 </script>
+

@@ -1,8 +1,8 @@
 ---
 import Layout from '../../../layouts/Layout.astro';
 
-// Keep old French URL alive after making French slugs distinct.
-const to = '/fr/blog/aviator-guide-fr/';
+// Keep old localized URL alive after consolidating Aviator slugs.
+const to = '/fr/blog/how-to-play-aviator/';
 ---
 
 <Layout title="Page deplacee" description="Cette page a ete deplacee." locale="fr" noindex={true} alternates={{ fr: to }}>
@@ -20,4 +20,3 @@ const to = '/fr/blog/aviator-guide-fr/';
 <script is:inline define:vars={{ to }}>
   window.location.replace(to);
 </script>
-

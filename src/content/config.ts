@@ -31,6 +31,8 @@ const blog = defineCollection({
     gameProvider: z.string().optional(),
     rtp: z.string().optional(),
     locale: z.enum(['en', 'fr', 'de', 'ru']).default('en'),
+    // Manual QA flag for locales that require explicit translation review.
+    translationReviewed: z.boolean().optional(),
   }),
 });
 

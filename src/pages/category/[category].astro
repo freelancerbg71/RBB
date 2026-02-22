@@ -1,15 +1,15 @@
 ﻿---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
-import { UI_TEXT, CATEGORY_NAMES, getCategoryName, type Locale } from '../../config/affiliate';
+import { UI_TEXT, getCategoryName, type Locale } from '../../config/affiliate';
 import { getDefaultHeroImageForPost } from '../../utils/blog-hero';
+import { isTranslationApproved } from '../../utils/translation-review';
 
 function slugifyCategory(input: string): string {
   return input.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
 export async function getStaticPaths() {
-  const locales: Locale[] = ['en'];
   const posts = await getCollection('blog', ({ data }) => (data.locale ?? 'en') === 'en' && data.postType === 'guide');
   const seen = new Set<string>();
   for (const p of posts) {
@@ -23,13 +23,11 @@ export async function getStaticPaths() {
   const categorySlugs = preferredOrder.filter((s) => seen.has(s)).concat([...seen].filter((s) => !preferredOrder.includes(s)));
 
   const paths = [];
-  for (const locale of locales) {
-    for (const category of categorySlugs) {
-      paths.push({
-        params: { category },
-        props: { locale },
-      });
-    }
+  for (const category of categorySlugs) {
+    paths.push({
+      params: { category },
+      props: { locale: 'en' },
+    });
   }
 
   return paths;
@@ -37,8 +35,12 @@ export async function getStaticPaths() {
 
 const categorySlug = Astro.params.category!;
 const { locale } = Astro.props as { locale: Locale };
+const basePrefix = locale === 'en' ? '' : `/${locale}`;
 
-const allPosts = await getCollection('blog', ({ data }) => data.locale === locale && data.postType === 'guide');
+const allPosts = await getCollection(
+  'blog',
+  ({ data }) => data.locale === locale && data.postType === 'guide' && isTranslationApproved(data),
+);
 
 const categoryPosts = allPosts
   .filter((post) => slugifyCategory(post.data.category) === categorySlug)
@@ -49,38 +51,41 @@ const preferredOrder = ['slots', 'crash-games', 'live-casino', 'table-games', 's
 const allCategories = preferredOrder.filter((s) => seenCategorySlugs.has(s)).concat([...seenCategorySlugs].filter((s) => !preferredOrder.includes(s)));
 const ui = UI_TEXT[locale];
 
-const infoBySlug: Record<string, Record<Locale, { title: string; description: string; icon: string }>> = {
+const infoBySlug: Record<string, { title: string; description: string; icon: string }> = {
   'crash-games': {
-    en: { title: 'Crash Game Guides', description: 'Educational guides explaining how crash games work, including mechanics and features.', icon: 'Crash' },
-    fr: { title: 'Guides Jeux Crash', description: 'Guides educatifs expliquant comment fonctionnent les jeux crash (mecanismes et fonctionnalites).', icon: 'Crash' },
+    title: 'Crash Game Guides',
+    description: 'Educational guides explaining how crash games work, including mechanics and features.',
+    icon: 'Crash',
   },
   'slots': {
-    en: { title: 'Slot Game Guides', description: 'Educational guides explaining how slot games work, from mechanics to bonus features.', icon: 'Slots' },
-    fr: { title: 'Guides Machines a Sous', description: 'Guides educatifs expliquant comment fonctionnent les machines a sous (mecanismes et bonus).', icon: 'Slots' },
+    title: 'Slot Game Guides',
+    description: 'Educational guides explaining how slot games work, from mechanics to bonus features.',
+    icon: 'Slots',
   },
   'live-casino': {
-    en: { title: 'Live Casino Guides', description: 'Educational guides explaining how live dealer games work.', icon: 'Live' },
-    fr: { title: 'Guides Casino Live', description: 'Guides educatifs expliquant comment fonctionnent les jeux avec croupier en direct.', icon: 'Live' },
+    title: 'Live Casino Guides',
+    description: 'Educational guides explaining how live dealer games work.',
+    icon: 'Live',
   },
   'table-games': {
-    en: { title: 'Table Game Guides', description: 'Educational guides explaining how casino table games work.', icon: 'Table' },
-    fr: { title: 'Guides Jeux de Table', description: 'Guides educatifs expliquant comment fonctionnent les jeux de table.', icon: 'Table' },
+    title: 'Table Game Guides',
+    description: 'Educational guides explaining how casino table games work.',
+    icon: 'Table',
   },
   'strategy': {
-    en: { title: 'Casino Strategy Guides', description: 'Educational guides about bankroll and understanding casino game mechanics.', icon: 'Strategy' },
-    fr: { title: 'Guides Strategie', description: 'Guides educatifs sur la gestion de bankroll et les mecanismes des jeux.', icon: 'Strategy' },
+    title: 'Casino Strategy Guides',
+    description: 'Educational guides about bankroll and understanding casino game mechanics.',
+    icon: 'Strategy',
   },
 };
 
-const info = infoBySlug[categorySlug]?.[locale] ?? {
+const info = infoBySlug[categorySlug] ?? {
   title: getCategoryName(categorySlug, locale),
-  description: locale === 'en'
-    ? `Educational guides explaining how ${getCategoryName(categorySlug, locale)} work.`
-    : `Guides educatifs sur ${getCategoryName(categorySlug, locale)}.`,
+  description: `Educational guides explaining how ${getCategoryName(categorySlug, locale)} work.`,
   icon: getCategoryName(categorySlug, locale),
 };
 
-const t = {
+const tByLocale = {
   en: {
     guidesAvailable: 'guides available',
     noGuides: 'No guides yet in this category',
@@ -90,17 +95,36 @@ const t = {
   fr: {
     guidesAvailable: 'guides disponibles',
     noGuides: 'Pas encore de guides dans cette categorie',
-    checkBack: 'Revenez bientot pour du nouveau contenu !',
+    checkBack: 'Revenez bientot pour du nouveau contenu.',
     categories: 'Categories :',
   },
-}[locale];
+  de: {
+    guidesAvailable: 'Leitfaeden verfuegbar',
+    noGuides: 'Noch keine Leitfaeden in dieser Kategorie',
+    checkBack: 'Schauen Sie bald wieder vorbei.',
+    categories: 'Kategorien:',
+  },
+  ru: {
+    guidesAvailable: 'guides available',
+    noGuides: 'No guides yet in this category',
+    checkBack: 'Check back soon for new content.',
+    categories: 'Categories:',
+  },
+} as const;
+const t = tByLocale[locale] ?? tByLocale.en;
+const dateLocale = locale === 'fr' ? 'fr-FR' : locale === 'de' ? 'de-DE' : locale === 'ru' ? 'ru-RU' : 'en-US';
 ---
 
 <Layout
   title={`${info.title} | Read Between Bets`}
   description={info.description}
   locale={locale}
-  alternates={{ en: `/category/${categorySlug}/`, fr: `/fr/category/${categorySlug}/` }}
+  alternates={{
+    en: `/category/${categorySlug}/`,
+    fr: `/fr/category/${categorySlug}/`,
+    de: `/de/category/${categorySlug}/`,
+    ru: `/ru/category/${categorySlug}/`,
+  }}
 >
   <section class="relative py-16 bg-dark-800/50 border-b border-dark-700">
     <div class="section-padding max-w-7xl mx-auto">
@@ -122,7 +146,7 @@ const t = {
       <div class="flex items-center gap-4 overflow-x-auto pb-2 scrollbar-hide">
         <span class="text-gray-500 text-sm whitespace-nowrap">{t.categories}</span>
         <a
-          href={locale === 'en' ? '/blog' : '/fr/blog'}
+          href={`${basePrefix}/blog`}
           class="px-4 py-2 rounded-full bg-dark-800 text-gray-300 hover:text-white text-sm font-medium whitespace-nowrap border border-dark-700 hover:border-brand-500/50 transition-colors"
         >
           {ui.all}
@@ -131,7 +155,7 @@ const t = {
           const isActive = catSlug === categorySlug;
           return (
             <a
-              href={locale === 'en' ? `/category/${catSlug}` : `/fr/category/${catSlug}`}
+              href={`${basePrefix}/category/${catSlug}`}
               class={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border transition-colors ${
                 isActive
                   ? 'bg-brand-500 text-white border-brand-500'
@@ -151,7 +175,7 @@ const t = {
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {categoryPosts.map((post) => (
           <article class="group relative flex flex-col cursor-pointer pb-6 border-b border-light/5 lg:border-none lg:pb-0">
-            <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="block w-full">
+            <a href={`${basePrefix}/blog/${post.data.urlSlug}`} class="block w-full">
               <div class="aspect-[4/3] bg-dark-800 relative overflow-hidden mb-5 rounded">
                 <img
                   src={getDefaultHeroImageForPost(post)}
@@ -162,7 +186,7 @@ const t = {
                 {post.data.featured && (
                   <div class="absolute top-4 left-4">
                     <span class="px-3 py-1 bg-white text-dark-900 text-[10px] uppercase tracking-widest font-bold">
-                      {locale === 'en' ? "Editor's Pick" : "Choix de la Redaction"}
+                      {ui.featured}
                     </span>
                   </div>
                 )}
@@ -180,14 +204,14 @@ const t = {
                   <span class="text-gray-500 font-sans text-[10px] uppercase tracking-widest border-l border-gray-700 pl-2">{post.data.gameProvider}</span>
                 )}
               </div>
-              <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="block mb-3">
+              <a href={`${basePrefix}/blog/${post.data.urlSlug}`} class="block mb-3">
                 <h2 class="text-xl font-semibold text-gray-200 group-hover:text-white transition-colors line-clamp-2 leading-snug">{post.data.title}</h2>
               </a>
               <p class="text-gray-400 text-sm line-clamp-3 mb-6 flex-1 leading-relaxed">{post.data.description}</p>
               <div class="flex items-center justify-between text-xs font-sans text-gray-500 pt-4 border-t border-dark-700">
                 <span class="uppercase tracking-wider">{post.data.author}</span>
                 <span>
-                  {post.data.pubDate.toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', {
+                  {post.data.pubDate.toLocaleDateString(dateLocale, {
                     month: 'short',
                     day: 'numeric',
                     year: 'numeric',

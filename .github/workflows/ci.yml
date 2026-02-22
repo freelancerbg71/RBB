@@ -31,7 +31,10 @@ jobs:
         run: npm run typecheck
 
       - name: Content lint (strict)
-        run: npm run lint:content -- --strict
+        run: npm run lint:content:strict
+
+      - name: Translation gates
+        run: npm run lint:translations
 
       - name: Internal link and alternate checks
         run: npm run check:links

@@ -3,16 +3,16 @@ import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { CATEGORY_NAMES, type Locale } from '../../config/affiliate';
 import { getDefaultHeroImageForPost } from '../../utils/blog-hero';
+import { isTranslationApproved } from '../../utils/translation-review';
 
 function slugifyCategory(input: string): string {
   return input.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-const currentPath = Astro.url.pathname;
 const locale: Locale = 'ru';
 
 const allPosts = await getCollection('blog', ({ data }) => {
-  return data.locale === locale && data.postType === 'guide';
+  return data.locale === locale && data.postType === 'guide' && isTranslationApproved(data);
 });
 
 const guideCount = allPosts.length;
@@ -84,10 +84,10 @@ const latestGrid = recentPosts.slice(1, 7);
           </p>
 
           <div class="mt-8 flex flex-wrap gap-3">
-            <a href={locale === 'en' ? '/blog' : '/ru/blog'} class="btn-primary">
+            <a href={'/ru/blog'} class="btn-primary">
               {h.primaryCta}
             </a>
-            <a href={locale === 'en' ? '/blog/insights' : '/ru/blog/insights'} class="btn-outline">
+            <a href={'/ru/blog/insights'} class="btn-outline">
               {h.secondaryCta}
             </a>
           </div>
@@ -112,7 +112,7 @@ const latestGrid = recentPosts.slice(1, 7);
           <p class="eyebrow mb-6 text-gray-400">{h.panelTitle}</p>
           <div class="space-y-6">
             {heroPanelPosts.map((post, index) => (
-              <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/ru/blog/${post.data.urlSlug}`} class="group flex items-start gap-4 transition-colors">
+              <a href={`/ru/blog/${post.data.urlSlug}`} class="group flex items-start gap-4 transition-colors">
                 <div class="shrink-0 w-8 text-brand-500 font-sans text-xl leading-none pt-0.5">
                   {String(index + 1).padStart(2, '0')}
                 </div>
@@ -137,7 +137,7 @@ const latestGrid = recentPosts.slice(1, 7);
       </div>
       <div class="flex flex-wrap gap-3">
         {categories.map((cat) => (
-          <a href={locale === 'en' ? `/category/${cat.slug}` : `/ru/category/${cat.slug}`} class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 transition-all hover:-translate-y-[1px] hover:border-brand-300/60 hover:text-white">
+          <a href={`/ru/category/${cat.slug}`} class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 transition-all hover:-translate-y-[1px] hover:border-brand-300/60 hover:text-white">
             <span class="text-brand-300">{cat.icon}</span>
             <span>{CATEGORY_NAMES[cat.slug]?.[locale] || cat.slug}</span>
           </a>
@@ -154,12 +154,12 @@ const latestGrid = recentPosts.slice(1, 7);
             <p class="eyebrow mb-2">{h.featuredGuides}</p>
             <p class="text-gray-300 max-w-2xl">{h.featuredSubtitle}</p>
           </div>
-          <a href={locale === 'en' ? '/blog' : '/ru/blog'} class="btn-outline hidden sm:inline-flex">{h.viewAll}</a>
+          <a href={'/ru/blog'} class="btn-outline hidden sm:inline-flex">{h.viewAll}</a>
         </div>
 
         <div class="grid gap-12 lg:grid-cols-[1.2fr_0.8fr]">
           <article class="group">
-            <a href={locale === 'en' ? `/blog/${featuredPosts[0].data.urlSlug}` : `/ru/blog/${featuredPosts[0].data.urlSlug}`} class="block">
+            <a href={`/ru/blog/${featuredPosts[0].data.urlSlug}`} class="block">
               <div class="aspect-[16/9] overflow-hidden rounded mb-6">
                 <img src={getDefaultHeroImageForPost(featuredPosts[0])} alt={featuredPosts[0].data.title} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
               </div>
@@ -174,7 +174,7 @@ const latestGrid = recentPosts.slice(1, 7);
           <div class="flex flex-col justify-center space-y-8">
             {featuredPosts.slice(1).map((post) => (
               <article class="group">
-                <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/ru/blog/${post.data.urlSlug}`} class="flex gap-6 items-center">
+                <a href={`/ru/blog/${post.data.urlSlug}`} class="flex gap-6 items-center">
                   <div class="w-32 h-32 overflow-hidden shrink-0 rounded">
                      <img src={getDefaultHeroImageForPost(post)} alt={post.data.title} class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" loading="lazy" />
                   </div>
@@ -198,13 +198,13 @@ const latestGrid = recentPosts.slice(1, 7);
           <p class="eyebrow mb-2">{h.latestGuides}</p>
           <p class="text-gray-300 max-w-2xl">{h.latestSubtitle}</p>
         </div>
-        <a href={locale === 'en' ? '/blog' : '/ru/blog'} class="btn-outline hidden sm:inline-flex">{h.viewAll}</a>
+        <a href={'/ru/blog'} class="btn-outline hidden sm:inline-flex">{h.viewAll}</a>
       </div>
 
       <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
         {latestLead && (
           <article class="group relative pb-8 border-b border-white/10 lg:border-none lg:pb-0">
-            <a href={locale === 'en' ? `/blog/${latestLead.data.urlSlug}` : `/ru/blog/${latestLead.data.urlSlug}`} class="block">
+            <a href={`/ru/blog/${latestLead.data.urlSlug}`} class="block">
               <div class="aspect-[4/3] overflow-hidden rounded mb-6">
                 <img src={getDefaultHeroImageForPost(latestLead)} alt={latestLead.data.title} class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
               </div>
@@ -220,7 +220,7 @@ const latestGrid = recentPosts.slice(1, 7);
         <div class="flex flex-col justify-between space-y-8 lg:pl-12 lg:border-l lg:border-white/5">
           {latestGrid.map((post) => (
             <article class="group">
-              <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/ru/blog/${post.data.urlSlug}`} class="block">
+              <a href={`/ru/blog/${post.data.urlSlug}`} class="block">
                 <p class="text-brand-500 font-sans uppercase tracking-widest text-[10px] mb-2">{post.data.category}</p>
                 <h3 class="text-xl text-gray-300 font-semibold leading-snug line-clamp-2 group-hover:text-white transition-colors">{post.data.title}</h3>
                 <p class="mt-2 text-sm text-gray-500 font-sans">{post.data.pubDate.toLocaleDateString('ru-RU', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
@@ -239,9 +239,12 @@ const latestGrid = recentPosts.slice(1, 7);
         <h2 class="text-3xl sm:text-4xl font-display text-white leading-tight">{h.ctaTitle}</h2>
         <p class="mt-4 text-gray-200">{h.ctaSubtitle}</p>
         <div class="mt-8">
-          <a href={locale === 'en' ? '/blog' : '/ru/blog'} class="btn-primary">{h.ctaButton}</a>
+          <a href={'/ru/blog'} class="btn-primary">{h.ctaButton}</a>
         </div>
       </div>
     </div>
   </section>
 </Layout>
+
+
+

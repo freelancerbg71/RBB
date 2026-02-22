@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { UI_TEXT, CTA_TEXT, type Locale, type Casino } from '../../../config/affiliate';
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
   }));
 }
 
-const locale: Locale = 'fr';
+const locale: Locale = 'ru';
 const { post } = Astro.props as { post: any };
 const { Content } = await post.render();
 
@@ -29,19 +29,19 @@ const casinos: Casino[] = ['privateclub', 'barbossabet'];
 const hasEnTranslation =
   (await getCollection('blog', ({ data }) => (data.locale ?? 'en') === 'en' && data.urlSlug === post.data.urlSlug)).length > 0;
 const alternates = {
-  fr: `/ru/blog/${post.data.urlSlug}/`,
+  ru: `/ru/blog/${post.data.urlSlug}/`,
   ...(hasEnTranslation ? { en: `/blog/${post.data.urlSlug}/` } : {}),
 };
 
 const t = {
-  breadcrumbsHome: 'Accueil',
+  breadcrumbsHome: 'Home',
   breadcrumbsGuides: 'Guides',
   tags: 'Tags',
-  relatedGuides: 'Guides connexes',
-  youMightLike: 'Vous aimerez aussi',
-  educationalPurpose: 'Ce guide explique comment fonctionne le jeu et ou il peut etre joue, selon les lois locales.',
-  riskWarning: 'Avertissement',
-  riskText: "Les jeux d'argent impliquent des risques. Ne jouez qu'avec de l'argent que vous pouvez vous permettre de perdre.",
+  relatedGuides: 'Related Guides',
+  youMightLike: 'You might also like',
+  educationalPurpose: 'This guide explains game mechanics and availability, subject to local laws.',
+  riskWarning: 'Risk Warning',
+  riskText: 'Gambling involves risk. Only play with money you can afford to lose.',
 };
 
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
@@ -68,7 +68,7 @@ const jsonLd = {
 const categorySlug = toKnownCategorySlug(post.data.category);
 const sectionHref =
   post.data.postType === 'news' || categorySlug === 'news' || categorySlug.length === 0
-    ? '/ru/blog/news'
+    ? '/ru/blog/insights'
     : `/ru/category/${categorySlug}`;
 ---
 
@@ -123,7 +123,7 @@ const sectionHref =
               <div>
                 <p class="text-white font-medium">{post.data.author}</p>
                 <p class="text-gray-500 text-sm">
-                  {post.data.pubDate.toLocaleDateString('fr-FR', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  {post.data.pubDate.toLocaleDateString('ru-RU', { month: 'long', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
             </div>
@@ -234,4 +234,5 @@ const sectionHref =
   </section>
 </Layout>
 \n
+
 

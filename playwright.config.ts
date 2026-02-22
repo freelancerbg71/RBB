@@ -7,10 +7,14 @@ export default defineConfig({
   timeout: 60_000,
   reporter: 'line',
   webServer: {
-    command: 'npm run preview -- --host 127.0.0.1 --port 4321',
+    command: 'node scripts/serve-static.mjs',
     url: 'http://127.0.0.1:4321',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
+    env: {
+      HOST: '127.0.0.1',
+      PORT: '4321',
+    },
   },
   use: {
     browserName: 'chromium',

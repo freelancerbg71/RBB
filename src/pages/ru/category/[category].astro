@@ -1,12 +1,16 @@
-﻿---
+---
 import CategoryPage from '../../category/[category].astro';
 import { type Locale } from '../../../config/affiliate';
 import { getCollection } from 'astro:content';
+import { isTranslationApproved } from '../../../utils/translation-review';
 
 export async function getStaticPaths() {
-  const locale: Locale = 'fr';
+  const locale: Locale = 'ru';
 
-  const posts = await getCollection('blog', ({ data }) => data.locale === 'ru' && data.postType === 'guide');
+  const posts = await getCollection(
+    'blog',
+    ({ data }) => data.locale === 'ru' && data.postType === 'guide' && isTranslationApproved(data),
+  );
   const toSlug = (input: string): string =>
     input
       .toLowerCase()
@@ -30,4 +34,5 @@ export async function getStaticPaths() {
 }
 ---
 
-<CategoryPage locale="fr" />
+<CategoryPage locale="ru" />
+

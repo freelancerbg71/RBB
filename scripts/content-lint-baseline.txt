@@ -1,0 +1,75 @@
+arcade-tokens-and-digital-chips-de.mdx: missing informational disclaimer phrase
+arcade-tokens-and-digital-chips-en.mdx: missing informational disclaimer phrase
+baccarat-beginner-rules-de.mdx: missing informational disclaimer phrase
+baccarat-beginner-rules-en.mdx: missing informational disclaimer phrase
+baccarat-strategies-de.mdx: missing informational disclaimer phrase
+baccarat-strategies-en.mdx: missing informational disclaimer phrase
+bingo-basics-de.mdx: missing informational disclaimer phrase
+bingo-basics-en.mdx: missing informational disclaimer phrase
+blackjack-charts-de.mdx: missing informational disclaimer phrase
+blackjack-charts-en.mdx: missing informational disclaimer phrase
+blackjack-charts-ru.mdx: potential English-only passage detected (/\bA blackjack chart\b/)
+blackjack-first-hands-de.mdx: missing informational disclaimer phrase
+blackjack-first-hands-en.mdx: missing informational disclaimer phrase
+blackjack-myths-truths-de.mdx: missing informational disclaimer phrase
+blackjack-myths-truths-de.mdx: persona risk phrase detected (/\bbeat the house\b/i)
+blackjack-myths-truths-en.mdx: missing informational disclaimer phrase
+blackjack-myths-truths-en.mdx: persona risk phrase detected (/\bbeat the house\b/i)
+blackjack-myths-truths-ru.mdx: persona risk phrase detected (/\bbeat the house\b/i)
+blackjack-odds-house-edge-de.mdx: missing informational disclaimer phrase
+blackjack-odds-house-edge-en.mdx: missing informational disclaimer phrase
+cluster-pays-slots-explained-de.mdx: missing informational disclaimer phrase
+cluster-pays-slots-explained-en.mdx: missing informational disclaimer phrase
+craps-beginner-bets-de.mdx: missing informational disclaimer phrase
+craps-beginner-bets-en.mdx: missing informational disclaimer phrase
+crypto-buzzwords-in-casino-marketing-de.mdx: missing informational disclaimer phrase
+crypto-buzzwords-in-casino-marketing-en.mdx: missing informational disclaimer phrase
+gambling-bankroll-management-basics-de.mdx: missing informational disclaimer phrase
+gambling-bankroll-management-basics-en.mdx: missing informational disclaimer phrase
+how-to-play-aviator-de.mdx: missing informational disclaimer phrase
+how-to-play-aviator.mdx: missing informational disclaimer phrase
+k-pop-comeback-stage-and-casino-ux-de.mdx: missing informational disclaimer phrase
+k-pop-comeback-stage-and-casino-ux-en.mdx: missing informational disclaimer phrase
+lightning-roulette-session-plan-de.mdx: missing informational disclaimer phrase
+lightning-roulette-session-plan-en.mdx: missing informational disclaimer phrase
+live-casino-poker-games-strategy-de.mdx: missing informational disclaimer phrase
+live-casino-poker-games-strategy-en.mdx: missing informational disclaimer phrase
+mega-ball-guide-de.mdx: missing informational disclaimer phrase
+mega-ball-guide-en.mdx: missing informational disclaimer phrase
+megaways-slots-explained-de.mdx: missing informational disclaimer phrase
+megaways-slots-explained-en.mdx: missing informational disclaimer phrase
+mines-guide-de.mdx: missing informational disclaimer phrase
+mines-guide-en.mdx: missing informational disclaimer phrase
+monopoly-live-guide-de.mdx: missing informational disclaimer phrase
+monopoly-live-guide-en.mdx: missing informational disclaimer phrase
+most-misplayed-bet-insurance-de.mdx: missing informational disclaimer phrase
+most-misplayed-bet-insurance-en.mdx: missing informational disclaimer phrase
+online-scratchcards-guide-de.mdx: missing informational disclaimer phrase
+online-scratchcards-guide-en.mdx: missing informational disclaimer phrase
+poker-beginners-rounds-position-de.mdx: missing informational disclaimer phrase
+poker-beginners-rounds-position-en.mdx: missing informational disclaimer phrase
+poker-hand-rankings-de.mdx: missing informational disclaimer phrase
+poker-hand-rankings-en.mdx: missing informational disclaimer phrase
+poker-myths-that-cost-de.mdx: missing informational disclaimer phrase
+poker-myths-that-cost-en.mdx: missing informational disclaimer phrase
+prediction-markets-vs-sports-betting-de.mdx: missing informational disclaimer phrase
+prediction-markets-vs-sports-betting-en.mdx: missing informational disclaimer phrase
+provably-fair-explained-de.mdx: missing informational disclaimer phrase
+provably-fair-explained-en.mdx: missing informational disclaimer phrase
+roulette-basics-bets-odds-de.mdx: missing informational disclaimer phrase
+roulette-basics-bets-odds-en.mdx: missing informational disclaimer phrase
+roulette-systems-reality-check-de.mdx: missing informational disclaimer phrase
+roulette-systems-reality-check-en.mdx: missing informational disclaimer phrase
+sic-bo-rules-bets-de.mdx: missing informational disclaimer phrase
+sic-bo-rules-bets-en.mdx: missing informational disclaimer phrase
+slot-volatility-quick-guide-de.mdx: missing informational disclaimer phrase
+slot-volatility-quick-guide-en.mdx: missing informational disclaimer phrase
+slots-terms-plain-english-de.mdx: missing informational disclaimer phrase
+slots-terms-plain-english-de.mdx: persona risk phrase detected (/\bguaranteed (?:profit|win|system)\b/i)
+slots-terms-plain-english-en.mdx: missing informational disclaimer phrase
+slots-terms-plain-english-en.mdx: persona risk phrase detected (/\bguaranteed (?:profit|win|system)\b/i)
+slots-terms-plain-english-ru.mdx: persona risk phrase detected (/\bguaranteed (?:profit|win|system)\b/i)
+spotify-wrapped-for-gambling-de.mdx: missing informational disclaimer phrase
+spotify-wrapped-for-gambling-en.mdx: missing informational disclaimer phrase
+wagering-requirements-plain-english-de.mdx: missing informational disclaimer phrase
+wagering-requirements-plain-english-en.mdx: missing informational disclaimer phrase

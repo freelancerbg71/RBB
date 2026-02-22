@@ -4,11 +4,12 @@ import BlogTabs from '../../../components/BlogTabs.astro';
 import { getCollection } from 'astro:content';
 import type { Locale } from '../../../config/affiliate';
 import { getDefaultHeroImageForPost } from '../../../utils/blog-hero';
+import { isTranslationApproved } from '../../../utils/translation-review';
 
-const locale: Locale = 'fr';
+const locale: Locale = 'de';
 
 const allPosts = await getCollection('blog', ({ data }) => {
-  return data.locale === locale && data.postType === 'insight';
+  return data.locale === locale && data.postType === 'insight' && isTranslationApproved(data);
 });
 const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
@@ -16,7 +17,7 @@ const title = 'Insights | Read Between Bets';
 const description = 'Klare Leitartikel zu Nachrichten, Produktmechaniken und Risikosignalen. Nur informativ.';
 ---
 
-<Layout title={title} description={description} locale={locale} alternates={{ en: '/blog/insights/', fr: '/de/blog/insights/' }}>
+<Layout title={title} description={description} locale={locale} alternates={{ en: '/blog/insights/', de: '/de/blog/insights/' }}>
   <section class="relative py-16 bg-dark-800/50 border-b border-dark-700 overflow-hidden">
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(16,185,129,0.15),transparent_40%),radial-gradient(circle_at_0%_100%,rgba(52,211,153,0.1),transparent_40%)]"></div>
     <div class="relative section-padding max-w-7xl mx-auto">
@@ -72,3 +73,5 @@ const description = 'Klare Leitartikel zu Nachrichten, Produktmechaniken und Ris
     </div>
   </section>
 </Layout>
+
+

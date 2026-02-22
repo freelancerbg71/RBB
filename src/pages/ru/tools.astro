@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import AffiliateCard from '../../components/AffiliateCard.astro';
 import { UI_TEXT, CTA_TEXT, type Casino, type Locale } from '../../config/affiliate';
 
-const locale: Locale = 'fr';
+const locale: Locale = 'ru';
 const title = 'Outils Casino : Cotes + Convertisseur de Frais Crypto | Read Between Bets';
 const description = 'Calculatrices pratiques pour convertir les cotes et comparer les frais reseau crypto.';
 const ui = UI_TEXT[locale];
@@ -11,7 +11,7 @@ const cta = CTA_TEXT[locale];
 const casinos: Casino[] = ['privateclub', 'barbossabet'];
 ---
 
-<Layout title={title} description={description} locale={locale} alternates={{ en: '/tools/', fr: '/ru/tools/' }}>
+<Layout title={title} description={description} locale={locale} alternates={{ en: '/tools/', ru: '/ru/tools/' }}>
   <section class="relative py-16 border-b border-dark-700">
     <div class="section-padding max-w-7xl mx-auto">
       <p class="eyebrow mb-4">Boite a Outils Joueur</p>
@@ -159,3 +159,5 @@ const casinos: Casino[] = ['privateclub', 'barbossabet'];
     (document.getElementById('probability-out-fr') as HTMLElement).textContent = `${impliedProbability.toFixed(2)}%`;
   });
 </script>
+
+

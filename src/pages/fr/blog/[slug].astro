@@ -68,7 +68,7 @@ const jsonLd = {
 const categorySlug = toKnownCategorySlug(post.data.category);
 const sectionHref =
   post.data.postType === 'news' || categorySlug === 'news' || categorySlug.length === 0
-    ? '/fr/blog/news'
+    ? '/fr/blog/insights'
     : `/fr/category/${categorySlug}`;
 ---
 
@@ -234,4 +234,3 @@ const sectionHref =
   </section>
 </Layout>
 \n
-

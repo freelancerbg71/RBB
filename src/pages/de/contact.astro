@@ -1,53 +1,26 @@
-﻿---
+---
 import Layout from '../../layouts/Layout.astro';
 ---
 
 <Layout
   title="Kontakt | Read Between Bets"
-  description="Contactez l'equipe Read Between Bets pour les questions generales, corrections editoriales et demandes liees a la confidentialite."
-  locale="fr"
-  alternates={{ en: '/contact/', fr: '/de/contact/' }}
+  description="Kontakt fuer allgemeine Anfragen, redaktionelle Korrekturen und Datenschutzfragen."
+  locale="de"
+  alternates={{ en: '/contact/', de: '/de/contact/' }}
 >
   <section class="py-16">
     <div class="section-padding max-w-4xl mx-auto">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-white mb-4">Contact</h1>
-        <p class="text-gray-400 text-lg">Questions, corrections ou retours : ecrivez-nous.</p>
-      </div>
-
-      <div class="grid md:grid-cols-2 gap-6 mb-12">
-        <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6">
-          <h2 class="text-xl font-bold text-white mb-2">Questions generales</h2>
-          <p class="text-gray-400 text-sm mb-4">Questions generales ou partenariats</p>
-          <a href="mailto:contact@readbetweenbets.com" class="text-brand-400 hover:text-brand-300 font-medium break-all">contact@readbetweenbets.com</a>
-        </div>
-
-        <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6">
-          <h2 class="text-xl font-bold text-white mb-2">Corrections editoriales</h2>
-          <p class="text-gray-400 text-sm mb-4">Signaler une erreur ou une information obsolete</p>
-          <a href="mailto:editorial@readbetweenbets.com" class="text-brand-400 hover:text-brand-300 font-medium break-all">editorial@readbetweenbets.com</a>
-        </div>
-
-        <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6">
-          <h2 class="text-xl font-bold text-white mb-2">Confidentialite</h2>
-          <p class="text-gray-400 text-sm mb-4">Questions sur la protection des donnees</p>
-          <a href="mailto:privacy@readbetweenbets.com" class="text-brand-400 hover:text-brand-300 font-medium break-all">privacy@readbetweenbets.com</a>
-        </div>
-
-        <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6">
-          <h2 class="text-xl font-bold text-white mb-2">Aide jeu responsable</h2>
-          <p class="text-gray-400 text-sm mb-4">Besoin d'aide immediate ? Consultez la page dediee</p>
-          <a href="/de/responsible-gambling" class="text-brand-400 hover:text-brand-300 font-medium">Ressources jeu responsable -></a>
-        </div>
-      </div>
-
-      <div class="bg-gradient-to-r from-orange-900/30 to-red-900/30 rounded-2xl border border-orange-500/30 p-8">
-        <h2 class="text-2xl font-bold text-white mb-4">Important</h2>
-        <div class="space-y-3 text-gray-300">
-          <p><strong class="text-white">Nous ne traitons pas les litiges avec les casinos :</strong> pour les retraits, bonus ou comptes, contactez directement le support du casino concerne.</p>
-          <p><strong class="text-white">Nous ne donnons pas de conseil juridique :</strong> pour la legalite dans votre zone, consultez un avocat local.</p>
-          <p><strong class="text-white">Nous ne donnons pas de conseil de jeu :</strong> pas de tips, pas de systeme gagnant, contenu purement informatif.</p>
-        </div>
+      <h1 class="text-4xl font-bold text-white mb-8">Kontakt</h1>
+      <div class="prose prose-invert max-w-none">
+        <p>Fragen, Korrekturen oder Feedback - schreiben Sie uns.</p>
+        <ul>
+          <li><strong>Allgemein:</strong> contact@readbetweenbets.com</li>
+          <li><strong>Redaktion:</strong> editorial@readbetweenbets.com</li>
+          <li><strong>Datenschutz:</strong> privacy@readbetweenbets.com</li>
+        </ul>
+        <h2>Wichtige Hinweise</h2>
+        <p>Wir bearbeiten keine Casino-Kontostreitigkeiten. Fuer Auszahlungen, Boni oder Kontoprobleme wenden Sie sich direkt an den jeweiligen Betreiber.</p>
+        <p>Wir geben keine individuelle Rechtsberatung. Pruefen Sie die Rechtslage in Ihrer Region.</p>
       </div>
     </div>
   </section>

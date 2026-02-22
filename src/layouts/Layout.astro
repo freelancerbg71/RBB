@@ -35,6 +35,12 @@ const t = NAV_TEXT[locale];
 const ui = UI_TEXT[locale];
 const jsonLdItems = Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [];
 const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
+const ogLocaleByLocale: Record<Locale, string> = {
+  en: 'en_US',
+  fr: 'fr_FR',
+  de: 'de_DE',
+  ru: 'ru_RU',
+};
 ---
 
 <!DOCTYPE html>
@@ -69,7 +75,7 @@ const plausibleDomain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN?.trim();
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={new URL(image, Astro.site)} />
-  <meta property="og:locale" content={locale === 'en' ? 'en_US' : 'fr_FR'} />
+  <meta property="og:locale" content={ogLocaleByLocale[locale]} />
   
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image" />

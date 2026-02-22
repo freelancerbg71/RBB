@@ -3,7 +3,6 @@ import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { UI_TEXT, CTA_TEXT, type Locale, type Casino } from '../../config/affiliate';
 import { getDefaultHeroImageForPost } from '../../utils/blog-hero';
-import React from 'react';
 import AffiliateCard from '../../components/AffiliateCard.astro';
 import ShareButtons from '../../components/ShareButtons.astro';
 import ClipboardNote from '../../components/ClipboardNote.astro';
@@ -23,7 +22,7 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { post, locale } = Astro.props as { post: any; locale: Locale };
+const { post, locale } = Astro.props as { post: any; locale: 'en' };
 const { Content } = await post.render();
 
 // Get related posts in same locale
@@ -40,8 +39,8 @@ const alternates = {
   ...(hasFrTranslation ? { fr: `/fr/blog/${post.data.urlSlug}/` } : {}),
 };
 
-const ui = UI_TEXT[locale as Locale];
-const cta = CTA_TEXT[locale as Locale];
+const ui = UI_TEXT[locale];
+const cta = CTA_TEXT[locale];
 
 // Get both casinos for neutral listing
 const casinos: Casino[] = ['privateclub', 'barbossabet'];
@@ -57,16 +56,6 @@ const t = {
     educationalPurpose: 'This guide explains how the game works and where it can be played, subject to local laws.',
     riskWarning: 'Risk Warning',
     riskText: 'Gambling involves risk. Only play with money you can afford to lose.',
-  },
-  fr: {
-    breadcrumbsHome: 'Accueil',
-    breadcrumbsGuides: 'Guides',
-    tags: 'Tags',
-    relatedGuides: 'Guides Connexes',
-    youMightLike: 'Vous aimerez peut-etre',
-    educationalPurpose: 'Ce guide explique comment fonctionne le jeu et ou il peut etre joue, sous reserve des lois locales.',
-    riskWarning: 'Avertissement sur les Risques',
-    riskText: 'Les jeux d\'argent impliquent des risques. Ne jouez qu\'avec de l\'argent que vous pouvez vous permettre de perdre.',
   },
 }[locale];
 
@@ -94,14 +83,14 @@ const jsonLd = {
 const categorySlug = toKnownCategorySlug(post.data.category);
 const sectionHref =
   post.data.postType === 'news' || categorySlug === 'news' || categorySlug.length === 0
-    ? (locale === 'en' ? '/blog/news' : '/fr/blog/news')
-    : (locale === 'en' ? `/category/${categorySlug}` : `/fr/category/${categorySlug}`);
+    ? '/blog/insights'
+    : `/category/${categorySlug}`;
 ---
 
 <Layout 
   title={`${post.data.title} | Read Between Bets`}
   description={post.data.description}
-  locale={locale as Locale}
+  locale={locale}
   alternates={alternates}
   jsonLd={jsonLd}
 >
@@ -122,9 +111,9 @@ const sectionHref =
         <div class="bg-dark-800 rounded-2xl border border-dark-700 p-6 md:p-8 shadow-xl">
           <!-- Breadcrumbs -->
           <nav class="flex items-center gap-2 text-sm text-gray-500 mb-4">
-            <a href={locale === 'en' ? '/' : '/fr/'} class="hover:text-brand-400 transition-colors">{t.breadcrumbsHome}</a>
+            <a href="/" class="hover:text-brand-400 transition-colors">{t.breadcrumbsHome}</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-            <a href={locale === 'en' ? '/blog' : '/fr/blog'} class="hover:text-brand-400 transition-colors">{t.breadcrumbsGuides}</a>
+            <a href="/blog" class="hover:text-brand-400 transition-colors">{t.breadcrumbsGuides}</a>
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             <span class="text-gray-400 truncate">{post.data.title}</span>
           </nav>
@@ -166,7 +155,7 @@ const sectionHref =
               <div>
                 <p class="text-white font-medium">{post.data.author}</p>
                 <p class="text-gray-500 text-sm">
-                  {post.data.pubDate.toLocaleDateString(locale === 'en' ? 'en-US' : 'fr-FR', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  {post.data.pubDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                 </p>
               </div>
             </div>
@@ -194,7 +183,7 @@ const sectionHref =
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {relatedPosts.map((related) => (
                 <a
-                  href={locale === 'en' ? `/blog/${related.data.urlSlug}` : `/fr/blog/${related.data.urlSlug}`}
+                  href={`/blog/${related.data.urlSlug}`}
                   class="group block"
                 >
                   <p class="text-xs text-brand-400 font-sans mb-1 uppercase tracking-wider">{related.data.category}</p>
@@ -237,7 +226,7 @@ const sectionHref =
 
               <div class="flex flex-col">
                 {casinos.map((casinoKey) => {
-                  const link = locale === 'en' ? `/go/${casinoKey}` : `/fr/go/${casinoKey}`;
+                  const link = `/go/${casinoKey}`;
                   return (
                     <AffiliateCard
                       casinoKey={casinoKey}
@@ -257,7 +246,7 @@ const sectionHref =
               <h3 class="text-lg font-bold text-white mb-6 uppercase tracking-wider">{t.relatedGuides}</h3>
               <div class="space-y-6">
                 {relatedPosts.map(related => (
-                  <a href={locale === 'en' ? `/blog/${related.data.urlSlug}` : `/fr/blog/${related.data.urlSlug}`} class="flex gap-4 group items-start">
+                  <a href={`/blog/${related.data.urlSlug}`} class="flex gap-4 group items-start">
                     <div class="w-16 h-16 bg-dark-800 flex items-center justify-center flex-shrink-0 overflow-hidden border border-dark-700">
                       <img
                         src={getDefaultHeroImageForPost(related)}
@@ -288,7 +277,7 @@ const sectionHref =
         <div class="grid md:grid-cols-3 gap-8">
           {relatedPosts.map(post => (
             <article class="group cursor-pointer">
-              <a href={locale === 'en' ? `/blog/${post.data.urlSlug}` : `/fr/blog/${post.data.urlSlug}`} class="block">
+              <a href={`/blog/${post.data.urlSlug}`} class="block">
                 <div class="aspect-[4/3] bg-dark-800 relative overflow-hidden mb-4 rounded">
                   <img
                     src={getDefaultHeroImageForPost(post)}
@@ -310,4 +299,3 @@ const sectionHref =
   )}
 </Layout>
 \n
-

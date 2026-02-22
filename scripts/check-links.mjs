@@ -71,11 +71,39 @@ function normalizeHref(href) {
   return href;
 }
 
-function toCompanionRoute(route) {
-  if (route === '/fr/' || route === '/fr') return '/';
-  if (route.startsWith('/fr/')) return `/${route.slice('/fr/'.length)}`;
-  if (route === '/') return '/fr/';
-  return `/fr${route.endsWith('/') ? route : `${route}/`}`;
+function splitRouteLocale(route) {
+  const normalized = route.startsWith('/') ? route : `/${route}`;
+  const match = /^\/(fr|de|ru)(\/.*|$)/.exec(normalized);
+  if (!match) return { locale: 'en', rest: normalized };
+  const rest = match[2] && match[2].length > 0 ? match[2] : '/';
+  return { locale: match[1], rest };
+}
+
+function toLocaleRoute(route, locale) {
+  const { rest } = splitRouteLocale(route);
+  if (locale === 'en') return rest;
+  if (rest === '/') return `/${locale}/`;
+  return `/${locale}${rest}`;
+}
+
+function isExcludedForAlternateValidation(route, isNoindex) {
+  return (
+    isNoindex ||
+    route.startsWith('/go/') ||
+    route.startsWith('/fr/go/') ||
+    route.startsWith('/de/go/') ||
+    route.startsWith('/ru/go/') ||
+    route.endsWith('/404/') ||
+    route === '/404.html'
+  );
+}
+
+function expectedAlternateLocales(route) {
+  const { locale } = splitRouteLocale(route);
+  if (locale === 'de') return ['en', 'de'];
+  if (locale === 'ru') return ['en', 'ru'];
+  // Keep EN/FR as the default pair for global and FR routes.
+  return ['en', 'fr'];
 }
 
 if (!fs.existsSync(DIST_DIR)) {
@@ -110,20 +138,16 @@ for (const filePath of htmlFiles) {
   }
 
   const alternates = extractAlternates(html);
-  const expectedCompanion = toCompanionRoute(route);
   const isNoindex = /<meta\s+name=["']robots["']\s+content=["'][^"']*noindex/i.test(html);
-  if (
-    routeExists(expectedCompanion) &&
-    !route.startsWith('/go/') &&
-    !route.startsWith('/fr/go/') &&
-    !route.endsWith('/404/') &&
-    route !== '/404.html' &&
-    !isNoindex
-  ) {
-    const hasEn = alternates.some((item) => item.lang === 'en');
-    const hasFr = alternates.some((item) => item.lang === 'fr');
-    if (!hasEn || !hasFr) {
-      failures.push(`${route} -> missing hreflang pair (en/fr)`);
+  if (!isExcludedForAlternateValidation(route, isNoindex)) {
+    for (const locale of expectedAlternateLocales(route)) {
+      const companion = toLocaleRoute(route, locale);
+      if (!routeExists(companion)) continue;
+
+      const hasLocaleAlternate = alternates.some((item) => item.lang === locale);
+      if (!hasLocaleAlternate) {
+        failures.push(`${route} -> missing hreflang ${locale}`);
+      }
     }
   }
 }
